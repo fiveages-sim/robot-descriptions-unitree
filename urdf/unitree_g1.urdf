@@ -358,16 +358,12 @@
 		Unitree G1 Body Macro
 		Includes: pelvis, torso, head, sensors, and logo
 		-->
-  <!-- Pelvis Link -->
-
-  <!-- Base Link -->
-  <link name="base_footprint"/>
-  <joint name="base_footprint_joint" type="fixed">
-    <origin xyz="0 0 0.8"/>
-    <parent link="base_footprint"/>
+  <link name="base_link"/>
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_link"/>
     <child link="pelvis"/>
   </joint>
-
+  <!-- Pelvis Link -->
   <link name="pelvis">
     <inertial>
       <origin xyz="0 0 -0.07605"/>
@@ -435,8 +431,15 @@
       </geometry>
     </visual>
     <collision>
+      <origin xyz="0.008 0 0.025"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/body/torso.obj"/>
+        <box size="0.12 0.15 0.05"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.008 0 0.15"/>
+      <geometry>
+        <box size="0.12 0.2 0.2"/>
       </geometry>
     </collision>
   </link>
@@ -446,12 +449,6 @@
     <child link="torso_link"/>
     <axis xyz="0 1 0"/>
     <limit effort="35" lower="-0.52" upper="0.52" velocity="30"/>
-  </joint>
-  <!-- Base Link -->
-  <link name="base_link"/>
-  <joint name="base_joint" type="fixed">
-    <parent link="torso_link"/>
-    <child link="base_link"/>
   </joint>
   <!-- Logo -->
   <link name="logo_link">
@@ -592,8 +589,15 @@
       </geometry>
     </visual>
     <collision>
+      <origin xyz="0 0 -0.02"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/shoulder_yaw.obj" scale="1 1 1"/>
+        <cylinder length="0.08" radius="0.03"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="1.5707963267948966 0 0" xyz="0.01 -0.01 -0.08"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -618,8 +622,9 @@
       </geometry>
     </visual>
     <collision>
+      <origin rpy="0 1.5707963267948966 0" xyz="0.07 0 -0.01"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/elbow.obj" scale="1 1 1"/>
+        <cylinder length="0.06" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -643,11 +648,6 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/wrist_roll.obj"/>
       </geometry>
     </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_roll.obj"/>
-      </geometry>
-    </collision>
   </link>
   <!-- Wrist Roll Joint -->
   <joint name="left_wrist_roll_joint" type="revolute">
@@ -670,8 +670,15 @@
       </geometry>
     </visual>
     <collision>
+      <origin rpy="1.5707963267948966 0 0"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_pitch.obj"/>
+        <cylinder length="0.06" radius="0.03"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.06 0 0"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -695,11 +702,6 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/wrist_yaw.obj"/>
       </geometry>
     </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_yaw.obj"/>
-      </geometry>
-    </collision>
   </link>
   <!-- Wrist Yaw Joint -->
   <joint name="left_wrist_yaw_joint" type="revolute">
@@ -782,8 +784,15 @@
       </geometry>
     </visual>
     <collision>
+      <origin xyz="0 0 -0.02"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/shoulder_yaw.obj" scale="1 -1 1"/>
+        <cylinder length="0.08" radius="0.03"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="1.5707963267948966 0 0" xyz="0.01 0.01 -0.08"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -808,8 +817,9 @@
       </geometry>
     </visual>
     <collision>
+      <origin rpy="0 1.5707963267948966 0" xyz="0.07 0 -0.01"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/elbow.obj" scale="1 -1 1"/>
+        <cylinder length="0.06" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -833,11 +843,6 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/wrist_roll.obj"/>
       </geometry>
     </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_roll.obj"/>
-      </geometry>
-    </collision>
   </link>
   <!-- Wrist Roll Joint -->
   <joint name="right_wrist_roll_joint" type="revolute">
@@ -860,8 +865,15 @@
       </geometry>
     </visual>
     <collision>
+      <origin rpy="1.5707963267948966 0 0"/>
       <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_pitch.obj"/>
+        <cylinder length="0.06" radius="0.03"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.06 0 0"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.03"/>
       </geometry>
     </collision>
   </link>
@@ -885,11 +897,6 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/wrist_yaw.obj"/>
       </geometry>
     </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://unitree_g1_description/meshes/arm/wrist_yaw.obj"/>
-      </geometry>
-    </collision>
   </link>
   <!-- Wrist Yaw Joint -->
   <joint name="right_wrist_yaw_joint" type="revolute">
@@ -917,6 +924,12 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/hand.obj" scale="1 1 1"/>
       </geometry>
     </visual>
+    <collision>
+      <origin xyz="0.07 -0.02 0"/>
+      <geometry>
+        <box size="0.12 0.05 0.1"/>
+      </geometry>
+    </collision>
   </link>
   <!-- 
 		Unitree G1 Hand Macro
@@ -936,6 +949,12 @@
         <mesh filename="package://unitree_g1_description/meshes/arm/hand.obj" scale="1 -1 1"/>
       </geometry>
     </visual>
+    <collision>
+      <origin xyz="0.07 0.02 0"/>
+      <geometry>
+        <box size="0.12 0.05 0.1"/>
+      </geometry>
+    </collision>
   </link>
   <joint dont_collapse="true" name="left_hand_palm_joint" type="fixed">
     <origin xyz="0.0415 0.003 0"/>

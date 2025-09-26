@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="PI" value="3.1415926535897931"/>
 
 	<xacro:macro name="UnitreeG1Arm" params="name direction:=1">
 		<!-- 
@@ -26,7 +27,7 @@
 				</geometry>
 			</visual>
 			<collision>
-				<origin xyz="0 ${direction*0.04} -0.01" rpy="0 1.5707963267948966 0"/>
+				<origin xyz="0 ${direction*0.04} -0.01" rpy="0 ${PI/2} 0"/>
 				<geometry>
 					<cylinder radius="0.03" length="0.05"/>
 				</geometry>
@@ -90,9 +91,15 @@
 				</geometry>
 			</visual>
 			<collision>
+				<origin xyz="0 0 -0.02"/>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_yaw.obj"
-								scale="1 ${direction} 1"/>
+					<cylinder radius="0.03" length="0.08"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0.01 ${direction*-0.01} -0.08" rpy="${PI/2.0} 0 0"/>
+				<geometry>
+					<cylinder radius="0.03" length="0.06"/>
 				</geometry>
 			</collision>
 		</link>
@@ -121,9 +128,9 @@
 				</geometry>
 			</visual>
 			<collision>
+				<origin xyz="0.07 0 -0.01" rpy="0 ${PI/2.0} 0"/>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/elbow.obj"
-								scale="1 ${direction} 1"/>
+					<cylinder radius="0.03" length="0.06"/>
 				</geometry>
 			</collision>
 		</link>
@@ -151,11 +158,6 @@
 					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_roll.obj"/>
 				</geometry>
 			</visual>
-			<collision>
-				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_roll.obj"/>
-				</geometry>
-			</collision>
 		</link>
 
 		<!-- Wrist Roll Joint -->
@@ -182,8 +184,15 @@
 				</geometry>
 			</visual>
 			<collision>
+				<origin rpy="${PI/2.0} 0 0"/>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_pitch.obj"/>
+					<cylinder radius="0.03" length="0.06"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0.06 0 0"/>
+				<geometry>
+					<cylinder radius="0.03" length="0.05"/>
 				</geometry>
 			</collision>
 		</link>
@@ -211,11 +220,6 @@
 					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.obj"/>
 				</geometry>
 			</visual>
-			<collision>
-				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.obj"/>
-				</geometry>
-			</collision>
 		</link>
 
 		<!-- Wrist Yaw Joint -->
