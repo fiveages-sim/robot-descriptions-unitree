@@ -1,29 +1,24 @@
+<?xml version="1.0" ?>
 <robot name="g1_29dof" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535897931"/>
 
-	<xacro:arg name="end_effector" default="rubber_hand"/>
+	<xacro:arg name="type" default="rubber_hand"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
 
-	<!-- Include the modular macros -->
 	<xacro:include filename="$(find unitree_g1_description)/xacro/arm.xacro"/>
 	<xacro:include filename="$(find unitree_g1_description)/xacro/leg.xacro"/>
 	<xacro:include filename="$(find unitree_g1_description)/xacro/body.xacro"/>
 	<xacro:include filename="$(find unitree_g1_description)/xacro/head.xacro"/>
+	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
 
-	<!-- Legs using modular macro -->
-	<!-- Left leg (direction = 1) -->
 	<xacro:UnitreeG1Leg name="left" direction="1"/>
-
-	<!-- Right leg (direction = -1 for mirroring) -->
 	<xacro:UnitreeG1Leg name="right" direction="-1"/>
 
-	<!-- Body using modular macro -->
 	<xacro:UnitreeG1Body/>
 	<xacro:UnitreeG1Head/>
 
-	<!-- Arms using modular macro -->
 	<xacro:UnitreeG1Arm name="left" direction="1"/>
-
 	<xacro:UnitreeG1Arm name="right" direction="-1"/>
 
-	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
 </robot>

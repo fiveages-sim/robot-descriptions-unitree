@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <robot name="unitree_g1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:arg name="type" default="dex3"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
 
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/chassis.xacro"/>
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/body.xacro"/>
 	<xacro:UnitreeG1DChassis/>
 	<xacro:UnitreeG1DBody/>
 
-	<!-- G1 torso frame: default head / arm mounts (no G1-D mesh offsets) -->
 	<xacro:include filename="$(find unitree_g1_description)/xacro/head.xacro"/>
 	<xacro:UnitreeG1Head/>
 
@@ -15,5 +15,6 @@
 	<xacro:UnitreeG1Arm name="left" direction="1"/>
 	<xacro:UnitreeG1Arm name="right" direction="-1"/>
 
-	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>
+	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
 </robot>

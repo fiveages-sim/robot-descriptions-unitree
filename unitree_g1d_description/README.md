@@ -5,7 +5,7 @@ Wheeled G1-D: AGV chassis, 3-stage lift, pitch/yaw mount, dual 7-DoF arms, Dex3 
 Reuses from `unitree_g1_description`:
 
 - `UnitreeG1Torso` (torso mesh, logo, torso IMU / D435 / Mid360)
-- `UnitreeG1Arm`, `UnitreeG1Head`, `hand.xacro`
+- `UnitreeG1Arm`, `UnitreeG1Head`, `UnitreeG1Eefs` (`eefs.xacro`)
 
 `torso_yaw_joint` (Yaw_Link → torso_link) keeps the official G1-D yaw limits, with
 origin z reduced by 9.8 mm so the G1 torso frame sits on the lift stack.

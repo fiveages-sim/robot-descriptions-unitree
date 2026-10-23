@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <robot name="unitree_r1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:arg name="type" default="none"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
 
 	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/chassis.xacro"/>
 	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/body.xacro"/>
 	<xacro:UnitreeR1DChassis/>
 	<xacro:UnitreeR1DBody/>
 
-	<!-- Optional end effector from G1 hand macros -->
-	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>
+	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
 </robot>
