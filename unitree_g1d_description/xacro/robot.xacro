@@ -7,14 +7,14 @@
 	<xacro:UnitreeG1DChassis/>
 	<xacro:UnitreeG1DBody/>
 
-	<!-- Shared G1 head (G1-D mount is 10 mm lower) -->
+	<!-- Shared G1 head (official G1-D mount is 10 mm lower than G1) -->
 	<xacro:include filename="$(find unitree_g1_description)/xacro/head.xacro"/>
 	<xacro:UnitreeG1Head xyz_z="-0.054"/>
 
-	<!-- Shared G1 arms -->
+	<!-- Shared G1 arms: G1-D torso_link is 9.8 mm higher vs G1 mesh alignment -->
 	<xacro:include filename="$(find unitree_g1_description)/xacro/arm.xacro"/>
-	<xacro:UnitreeG1Arm name="left" direction="1"/>
-	<xacro:UnitreeG1Arm name="right" direction="-1"/>
+	<xacro:UnitreeG1Arm name="left" direction="1" mount_xyz_z="-0.0098"/>
+	<xacro:UnitreeG1Arm name="right" direction="-1" mount_xyz_z="-0.0098"/>
 
 	<!-- Shared G1 end effectors (default Dex3) -->
 	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>

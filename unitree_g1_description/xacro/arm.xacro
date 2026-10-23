@@ -2,14 +2,12 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535897931"/>
 
-	<xacro:macro name="UnitreeG1Arm" params="name direction:=1">
-		<!-- 
-		Unitree G1 Arm Macro
-		Parameters:
-		- name: arm name prefix (e.g., "left", "right")
-		- direction: 1 for right arm, -1 for left arm (for mirroring)
-		-->
-
+	<!--
+	mount_xyz_*: offset added to the nominal shoulder pitch origin on torso_link.
+	G1-D torso frame sits ~9.8 mm higher than G1's relative to the visual mesh;
+	pass mount_xyz_z:=-0.0098 so reused arms land on the G1-D torso.
+	-->
+	<xacro:macro name="UnitreeG1Arm" params="name direction:=1 parent:=torso_link mount_xyz_x:=0 mount_xyz_y:=0 mount_xyz_z:=0">
 		<xacro:property name="prefix" value="${name + '_' if name else ''}"/>
 
 		<!-- Shoulder Pitch Link -->
@@ -36,9 +34,9 @@
 
 		<!-- Shoulder Pitch Joint -->
 		<joint name="${prefix}shoulder_pitch_joint" type="revolute">
-			<origin xyz="0.0039563 ${direction*0.10022} 0.24778"
+			<origin xyz="${0.0039563 + mount_xyz_x} ${direction*0.10022 + mount_xyz_y} ${0.24778 + mount_xyz_z}"
 							rpy="${direction*0.27931} 5.4949E-05 ${direction*-0.00019159}"/>
-			<parent link="torso_link"/>
+			<parent link="${parent}"/>
 			<child link="${prefix}shoulder_pitch_link"/>
 			<axis xyz="0 1 0"/>
 			<limit lower="-3.0892" upper="2.6704" effort="25" velocity="37"/>
