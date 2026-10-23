@@ -13,8 +13,9 @@ Quadrupeds (Go1, Go2, A1, B2, Aliengo) live in [robot-descriptions-quadruped](ht
 
 | Macro / file | Reused by |
 |--------------|-----------|
-| `xacro/arm.xacro` (`UnitreeG1Arm`) | G1, G1-D (`mount_xyz_z:=-0.0098` on G1-D) |
-| `xacro/head.xacro` (`UnitreeG1Head`) | G1, G1-D (`xyz_z:=-0.054` on G1-D) |
+| `xacro/torso.xacro` (`UnitreeG1Torso`) | G1, G1-D |
+| `xacro/arm.xacro` (`UnitreeG1Arm`) | G1, G1-D |
+| `xacro/head.xacro` (`UnitreeG1Head`) | G1, G1-D |
 | `xacro/hand.xacro` (`type`: `rubber_hand` / `revo2` / `dex3` / `none`) | G1, G1-D, R1-D |
 
 ## Common Commands

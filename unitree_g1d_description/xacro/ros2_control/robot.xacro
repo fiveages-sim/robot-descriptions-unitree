@@ -44,7 +44,7 @@
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 		</joint>
-		<joint name="torso_Joint">
+		<joint name="torso_yaw_joint">
 			<command_interface name="position"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>

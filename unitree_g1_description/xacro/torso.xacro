@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!--
+	G1 torso + logo + torso-mounted sensors.
+	Caller must create the parent joint into torso_link (waist_pitch on G1,
+	torso_yaw on G1-D).
+	-->
+	<xacro:macro name="UnitreeG1Torso">
+		<link name="torso_link">
+			<inertial>
+				<origin xyz="0.000931 0.000346 0.15082"/>
+				<mass value="6.78"/>
+				<inertia ixx="0.05905" ixy="3.3302E-05" ixz="-0.0017715" iyy="0.047014" iyz="-2.2399E-05" izz="0.025652"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/torso.obj"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0.008 0 0.05"/>
+				<geometry>
+					<box size="0.12 0.15 0.15"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0.008 0 0.2"/>
+				<geometry>
+					<box size="0.12 0.2 0.15"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<link name="logo_link">
+			<inertial>
+				<mass value="0.001"/>
+				<inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/logo.obj"/>
+				</geometry>
+			</visual>
+		</link>
+
+		<joint name="logo_joint" type="fixed">
+			<origin xyz="0.0039635 0 -0.044"/>
+			<parent link="torso_link"/>
+			<child link="logo_link"/>
+		</joint>
+
+		<link name="imu_in_torso"/>
+		<joint name="imu_in_torso_joint" type="fixed">
+			<origin xyz="-0.03959 -0.00224 0.14792"/>
+			<parent link="torso_link"/>
+			<child link="imu_in_torso"/>
+		</joint>
+
+		<link name="d435_link"/>
+		<joint name="d435_joint" type="fixed">
+			<origin xyz="0.0576235 0.01753 0.42987" rpy="0 0.8307767239493009 0"/>
+			<parent link="torso_link"/>
+			<child link="d435_link"/>
+		</joint>
+
+		<link name="mid360_link"/>
+		<joint name="mid360_joint" type="fixed">
+			<origin xyz="0.0002835 0.00003 0.41618" rpy="0 0.04014257279586953 0"/>
+			<parent link="torso_link"/>
+			<child link="mid360_link"/>
+		</joint>
+	</xacro:macro>
+
+</robot>
