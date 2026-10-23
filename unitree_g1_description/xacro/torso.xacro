@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="PI" value="3.1415926535897931"/>
 
 	<!--
 	G1 torso + logo + torso-mounted sensors.
@@ -57,9 +58,12 @@
 			<child link="imu_in_torso"/>
 		</joint>
 
+		<!-- D435: ROS optical (+Z forward, +X right, +Y down). Mount pitch 0.8308
+		     was previously X-forward/Z-up; compose with (-PI/2, 0, -PI/2). -->
 		<link name="d435_link"/>
 		<joint name="d435_joint" type="fixed">
-			<origin xyz="0.0576235 0.01753 0.42987" rpy="0 0.8307767239493009 0"/>
+			<origin xyz="0.0576235 0.01753 0.42987"
+							rpy="${-PI/2 - 0.8307767239493009} 0 ${-PI/2}"/>
 			<parent link="torso_link"/>
 			<child link="d435_link"/>
 		</joint>
