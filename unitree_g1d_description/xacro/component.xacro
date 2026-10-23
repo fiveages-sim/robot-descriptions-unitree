@@ -1,10 +1,24 @@
 <?xml version="1.0"?>
+<!--
+  Component-wise description for Unitree G1-D (component.launch.py).
+  type: chassis | lift | body
+  isaac:=true hides sensor_models visuals (Isaac Sim import).
+-->
 <robot name="unitree_g1d_component" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:arg name="type" default="chassis"/>
+	<xacro:arg name="isaac" default="false"/>
+	<xacro:arg name="chassis_joints_movable" default="true"/>
+
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/lift.xacro"/>
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/body.xacro"/>
+
 	<xacro:if value="${'$(arg type)' == 'chassis'}">
-		<xacro:UnitreeG1DChassis/>
+		<xacro:UnitreeG1DChassis joints_movable="$(arg chassis_joints_movable)" isaac="$(arg isaac)"/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'lift'}">
+		<link name="AGV_link"/>
+		<xacro:UnitreeG1DLift/>
 	</xacro:if>
 	<xacro:if value="${'$(arg type)' == 'body'}">
 		<link name="Yaw_Link"/>

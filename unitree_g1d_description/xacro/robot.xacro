@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
 <robot name="unitree_g1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- type: none | rubber_hand | revo2 | dex3 | dex1
+	     OCS2 planning: robot_common_launch injects eef_fixed_joints:=true. -->
 	<xacro:arg name="type" default="dex3"/>
 	<xacro:arg name="eef_fixed_joints" default="false"/>
+	<!-- Dex1 optional wrist camera mount + optical frame. -->
+	<xacro:arg name="camera" default="true"/>
+	<!-- Drive/caster joints fixed by default (planning). true for diff_drive / component preview. -->
+	<xacro:arg name="chassis_joints_movable" default="false"/>
+	<!-- isaac:=true hides chassis sensor_models visuals (Isaac Sim import). -->
+	<xacro:arg name="isaac" default="false"/>
 
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/lift.xacro"/>
 	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/body.xacro"/>
-	<xacro:UnitreeG1DChassis/>
+	<xacro:UnitreeG1DChassis joints_movable="$(arg chassis_joints_movable)" isaac="$(arg isaac)"/>
+	<xacro:UnitreeG1DLift/>
 	<xacro:UnitreeG1DBody/>
 
 	<xacro:include filename="$(find unitree_g1_description)/xacro/head.xacro"/>
@@ -16,5 +26,5 @@
 	<xacro:UnitreeG1Arm name="right" direction="-1"/>
 
 	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
-	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
 </robot>

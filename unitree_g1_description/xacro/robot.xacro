@@ -2,8 +2,12 @@
 <robot name="g1_29dof" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535897931"/>
 
+	<!-- type: none | rubber_hand | revo2 | dex3 | dex1
+	     OCS2 planning: robot_common_launch injects eef_fixed_joints:=true. -->
 	<xacro:arg name="type" default="rubber_hand"/>
 	<xacro:arg name="eef_fixed_joints" default="false"/>
+	<!-- Dex1 optional wrist camera mount + optical frame. -->
+	<xacro:arg name="camera" default="true"/>
 
 	<xacro:include filename="$(find unitree_g1_description)/xacro/arm.xacro"/>
 	<xacro:include filename="$(find unitree_g1_description)/xacro/leg.xacro"/>
@@ -20,5 +24,5 @@
 	<xacro:UnitreeG1Arm name="left" direction="1"/>
 	<xacro:UnitreeG1Arm name="right" direction="-1"/>
 
-	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
 </robot>

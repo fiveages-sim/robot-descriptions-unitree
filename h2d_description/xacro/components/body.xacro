@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!-- H2D waist heave and waist pitch. Parent is pelvis_link. -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="UnitreeH2DBody">
+		<link name="waist_heave_link">
+			<inertial>
+				<origin xyz="0.0713 0.007 0.001" rpy="0 0 0"/>
+				<mass value="8.3014"/>
+				<inertia ixx="0.0156869792" ixy="-0.0031691804" ixz="0.0011353634" iyy="0.0482206365" iyz="-0.0000478922" izz="0.050987748"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/waist_heave_link.stl"/>
+				</geometry>
+				<material name="waist_heave_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/waist_heave_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="waist_heave_joint" type="prismatic">
+			<origin xyz="-0.094296 0 0.91572" rpy="0 -0.017453 0"/>
+			<parent link="pelvis_link"/>
+			<child link="waist_heave_link"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="-0.45" upper="0" effort="600" velocity="0.2"/>
+		</joint>
+		<link name="waist_pitch_link">
+			<inertial>
+				<origin xyz="0.0074 -0.0618 0.2811" rpy="0 0 0"/>
+				<mass value="17.7831"/>
+				<inertia ixx="0.4630887896" ixy="-0.0011413364" ixz="-0.0016646954" iyy="0.4336629158" iyz="0.0179907924" izz="0.103774760"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/waist_pitch_link.stl"/>
+				</geometry>
+				<material name="waist_pitch_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/waist_pitch_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="waist_pitch_joint" type="revolute">
+			<origin xyz="0.1315 0.0693 0" rpy="0 0.017453 0"/>
+			<parent link="waist_heave_link"/>
+			<child link="waist_pitch_link"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="-2" upper="0" effort="200" velocity="30"/>
+		</joint>
+	</xacro:macro>
+</robot>

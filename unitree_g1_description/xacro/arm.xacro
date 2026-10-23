@@ -215,7 +215,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.obj" scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 		</link>
@@ -227,6 +227,14 @@
 			<parent link="${prefix}wrist_pitch_link"/>
 			<child link="${prefix}wrist_yaw_link"/>
 			<limit effort="5" velocity="22" lower="-1.614429558" upper="1.614429558"/>
+		</joint>
+
+		<!-- Flange / planning TCP (EE mounts here; ~41.5 mm along wrist X). -->
+		<link name="${prefix}tcp"/>
+		<joint name="${prefix}tcp_joint" type="fixed">
+			<origin xyz="0.0415 0 0"/>
+			<parent link="${prefix}wrist_yaw_link"/>
+			<child link="${prefix}tcp"/>
 		</joint>
 
 	</xacro:macro>

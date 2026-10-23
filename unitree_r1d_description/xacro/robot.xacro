@@ -2,6 +2,8 @@
 <robot name="unitree_r1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:arg name="type" default="none"/>
 	<xacro:arg name="eef_fixed_joints" default="false"/>
+	<!-- Dex1 optional wrist camera mount + optical frame. -->
+	<xacro:arg name="camera" default="true"/>
 
 	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/chassis.xacro"/>
 	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/body.xacro"/>
@@ -9,5 +11,5 @@
 	<xacro:UnitreeR1DBody/>
 
 	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
-	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
 </robot>

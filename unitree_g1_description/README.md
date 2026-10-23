@@ -31,6 +31,14 @@ colcon build --packages-up-to unitree_g1_description --symlink-install
   ros2 launch robot_common_launch humanoid.launch.py type:=dex3
   ```
 
+* G1 with Unitree Dex1 gripper
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch robot_common_launch humanoid.launch.py type:=dex1
+  ```
+
+Dex1 and Dex3 meshes and macros live in `unitree_dex_description`.
+
 ### 2.2 Visualize from Unitree SDK2 DDS
 * Unitree Mujoco
   ```bash

@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!-- H2D base, pelvis and drive wheels. Numbers copied from h2d.urdf. -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="UnitreeH2DChassis">
+		<link name="base_link">
+			<inertial>
+				<origin xyz="-0.0293 0 -0.0296" rpy="0 0 0"/>
+				<mass value="3.6"/>
+				<inertia ixx="0.1265523526" ixy="0.0003430311" ixz="-0.0008925799" iyy="0.1536518182" iyz="0.0000670757" izz="0.2744859092"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/base_link.stl"/>
+				</geometry>
+				<material name="base_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/base_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<link name="pelvis_link">
+			<inertial>
+				<origin xyz="-0.0371 0.0023 0.0833" rpy="0 0 0"/>
+				<mass value="97.063"/>
+				<inertia ixx="4.8974606848" ixy="0.0156598062" ixz="0.6091668923" iyy="5.4522042574" iyz="0.0139441979" izz="3.1526101078"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/pelvis_link.stl"/>
+				</geometry>
+				<material name="pelvis_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/pelvis_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="pelvis_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<parent link="base_link"/>
+			<child link="pelvis_link"/>
+		</joint>
+		<link name="left_wheel_roll_link">
+			<inertial>
+				<origin xyz="0 0.0035 0" rpy="0 0 0"/>
+				<mass value="1.2566"/>
+				<inertia ixx="0.0023698838" ixy="0" ixz="-0.0000001756" iyy="0.0043572049" iyz="0" izz="0.0023734076"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/left_wheel_roll_link.stl"/>
+				</geometry>
+				<material name="left_wheel_roll_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/left_wheel_roll_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="left_wheel_roll_joint" type="continuous">
+			<origin xyz="0 0.246 0" rpy="0 0 0"/>
+			<parent link="pelvis_link"/>
+			<child link="left_wheel_roll_link"/>
+			<axis xyz="0 -1 0"/>
+		</joint>
+		<link name="right_wheel_roll_link">
+			<inertial>
+				<origin xyz="0 -0.0035 0" rpy="0 0 0"/>
+				<mass value="1.256"/>
+				<inertia ixx="0.0023698838" ixy="0" ixz="0.0000001756" iyy="0.0043572049" iyz="0" izz="0.0023734076"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/right_wheel_roll_link.stl"/>
+				</geometry>
+				<material name="right_wheel_roll_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/right_wheel_roll_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="right_wheel_roll_joint" type="continuous">
+			<origin xyz="0 -0.246 0" rpy="0 0 0"/>
+			<parent link="pelvis_link"/>
+			<child link="right_wheel_roll_link"/>
+			<axis xyz="0 1 0"/>
+		</joint>
+	</xacro:macro>
+</robot>

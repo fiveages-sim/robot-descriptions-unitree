@@ -1,0 +1,12 @@
+/**:
+  ros__parameters:
+    linear_scale: 0.3
+    angular_scale: 0.5
+    enable_vr: true
+
+    marker_fixed_frame: base_link
+    vr_follow_frame: base_link
+    enable_wbc_head_tracking_marker: false
+
+    head_link_name: "head_yaw_link"
+    reference_link: "head_yaw_link"

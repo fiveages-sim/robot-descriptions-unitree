@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!--
+	Dex1 ros2_control interfaces. name="left" yields left_gripper_joint.
+	AdaptiveGripperController drives that joint. left_gripper_joint1 is a URDF
+	mimic; robot_state_publisher fills its TF. Gazebo needs a state-only
+	interface so the sim joint state is published (same as Revo2 mimic joints).
+	eef_fixed:=true matches the planning URDF, which freezes the jaws.
+	-->
+	<xacro:macro name="UnitreeDex1Interfaces" params="name eef_fixed:=false">
+		<xacro:arg name="gazebo" default="false"/>
+		<xacro:property name="prefix" value="${name}_"/>
+		<xacro:property name="eef_is_fixed" value="${str(eef_fixed).lower() in ['1', 'true', 'yes', 'on']}"/>
+
+		<xacro:unless value="${eef_is_fixed}">
+			<joint name="${prefix}gripper_joint">
+				<command_interface name="position"/>
+				<state_interface name="position"/>
+				<state_interface name="velocity"/>
+				<state_interface name="effort"/>
+			</joint>
+			<xacro:if value="$(arg gazebo)">
+				<joint name="${prefix}gripper_joint1">
+					<state_interface name="position"/>
+					<state_interface name="velocity"/>
+					<state_interface name="effort"/>
+				</joint>
+			</xacro:if>
+		</xacro:unless>
+	</xacro:macro>
+</robot>

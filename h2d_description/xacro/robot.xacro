@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="h2d" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- type: none | rubber_hand | revo2 | dex3 | dex1
+	     OCS2 planning: robot_common_launch injects eef_fixed_joints:=true. -->
+	<xacro:arg name="type" default="dex1"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
+	<!-- Dex1 optional wrist camera mount + optical frame. -->
+	<xacro:arg name="camera" default="true"/>
+
+	<xacro:include filename="$(find h2d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/body.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/head.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/arm.xacro"/>
+	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
+
+	<xacro:UnitreeH2DChassis/>
+	<xacro:UnitreeH2DBody/>
+	<xacro:UnitreeH2DHead/>
+	<xacro:UnitreeH2DArm name="left"/>
+	<xacro:UnitreeH2DArm name="right"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
+</robot>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!--
+	Unitree G1 7-DoF arm ros2_control interfaces.
+	Shared by G1 / G1-D / H2D (same left_*/right_* joint names).
+	Dex1 / Dex3 live in unitree_dex_description/xacro/ros2_control.
+	-->
+	<xacro:macro name="UnitreeG1ArmJoint" params="jname">
+		<joint name="${jname}">
+			<command_interface name="position"/>
+			<state_interface name="position"/>
+			<state_interface name="velocity"/>
+			<state_interface name="effort"/>
+		</joint>
+	</xacro:macro>
+
+	<xacro:macro name="UnitreeG1ArmInterfaces" params="name">
+		<xacro:property name="prefix" value="${name}_"/>
+
+		<xacro:UnitreeG1ArmJoint jname="${prefix}shoulder_pitch_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}shoulder_roll_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}shoulder_yaw_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}elbow_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}wrist_roll_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}wrist_pitch_joint"/>
+		<xacro:UnitreeG1ArmJoint jname="${prefix}wrist_yaw_joint"/>
+	</xacro:macro>
+</robot>

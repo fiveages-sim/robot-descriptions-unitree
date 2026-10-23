@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- Standalone preview. type: dex1 | dex3
+     OCS2 planning injects eef_fixed_joints:=true (same as G1/G1-D/H2D). -->
+<robot name="unitree_dex" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="dex1"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
+	<xacro:arg name="camera" default="false"/>
+
+	<xacro:include filename="$(find unitree_dex_description)/xacro/dex1.xacro"/>
+	<xacro:include filename="$(find unitree_dex_description)/xacro/dex3.xacro"/>
+
+	<xacro:if value="${'$(arg type)' == 'dex1'}">
+		<link name="left_wrist_yaw_link"/>
+		<xacro:UnitreeDex1 name="left" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
+		<joint name="left_base_joint" type="fixed">
+			<parent link="left_wrist_yaw_link"/>
+			<child link="left_dex1_base_link"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+		</joint>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'dex3'}">
+		<link name="base_link"/>
+		<link name="left_wrist_yaw_link"/>
+		<link name="right_wrist_yaw_link"/>
+		<joint name="left_wrist_stub" type="fixed">
+			<parent link="base_link"/>
+			<child link="left_wrist_yaw_link"/>
+		</joint>
+		<joint name="right_wrist_stub" type="fixed">
+			<parent link="base_link"/>
+			<child link="right_wrist_yaw_link"/>
+		</joint>
+		<xacro:UnitreeDex3 name="left" direction="1" fixed_joints="$(arg eef_fixed_joints)"/>
+		<xacro:UnitreeDex3 name="right" direction="-1" fixed_joints="$(arg eef_fixed_joints)"/>
+		<joint name="left_hand_palm_joint" type="fixed">
+			<origin xyz="0.0415 0.003 0" rpy="0 0 0"/>
+			<parent link="left_wrist_yaw_link"/>
+			<child link="left_hand_palm_link"/>
+		</joint>
+		<joint name="right_hand_palm_joint" type="fixed">
+			<origin xyz="0.0415 -0.003 0" rpy="0 0 0"/>
+			<parent link="right_wrist_yaw_link"/>
+			<child link="right_hand_palm_link"/>
+		</joint>
+	</xacro:if>
+</robot>

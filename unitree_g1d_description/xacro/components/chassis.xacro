@@ -1,191 +1,189 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="UnitreeG1DChassis">
-        <link name="AGV_link">
-            <inertial>
+	<!-- AGV deck, Slamtec drive wheels / support casters, chassis sensors.
+	     isaac:=true omits sensor_models visuals (lidar / cameras / ultrasonics). -->
+	<xacro:include filename="$(find component_models)/xacro/slamtec_caster.xacro"/>
 
-                <mass value="37"/>
-                <inertia ixx="0.091169133" ixy="0.000090756" ixz="0.000185579" iyy="0.081069202" iyz="-0.000057807"
-                         izz="0.158050329"/>
-            </inertial>
-            <visual>
+	<xacro:macro name="UnitreeG1DChassis" params="joints_movable:=true isaac:=false">
+		<xacro:property name="chassis_movable" value="${str(joints_movable).lower() in ['true', '1', 'yes', 'on']}"/>
+		<xacro:property name="wheel_joint_type" value="${'continuous' if chassis_movable else 'fixed'}"/>
+		<!-- Drive-wheel contact in AGV frame: z_axle=-0.0265, r=0.0849 → ground at -0.1114. -->
+		<xacro:property name="base_height" value="0.1114"/>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/AGV_link.STL"/>
-                </geometry>
-            </visual>
-            <collision>
+		<!-- Root: footprint on the ground, base_link coincident with AGV_link. -->
+		<link name="base_footprint"/>
+		<link name="base_link"/>
+		<joint name="base_footprint_joint" type="fixed">
+			<origin xyz="0 0 ${base_height}"/>
+			<parent link="base_footprint"/>
+			<child link="base_link"/>
+		</joint>
+		<joint name="AGV_joint" type="fixed">
+			<origin xyz="0 0 0"/>
+			<parent link="base_link"/>
+			<child link="AGV_link"/>
+		</joint>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/AGV_link.STL"/>
-                </geometry>
-            </collision>
-        </link>
-        <link name="LZ_it_Link">
-            <inertial>
-                <origin xyz="-0.001566 -0.000192 -0.199159"/>
-                <mass value="3.4"/>
-                <inertia ixx="0.068209705" ixy="-0.00000153" ixz="0.000139907" iyy="0.068182916" iyz="-0.000006575"
-                         izz="0.010584232"/>
-            </inertial>
-            <visual>
+		<link name="AGV_link">
+			<inertial>
+				<mass value="37"/>
+				<inertia ixx="0.091169133" ixy="0.000090756" ixz="0.000185579" iyy="0.081069202" iyz="-0.000057807"
+								 izz="0.158050329"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/agv_base.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/agv_base.glb"/>
+				</geometry>
+			</collision>
+		</link>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/lz_it_link.glb"/>
-                </geometry>
-            </visual>
-        </link>
-        <link name="LZ_mt_Link">
-            <inertial>
-                <origin xyz="0.000494 -0.000062 0.216016"/>
-                <mass value="3.3"/>
-                <inertia ixx="0.057352663" ixy="0" ixz="0" iyy="0.05735287" iyz="0" izz="0.012847336"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/lz_mt_link.glb"/>
-                </geometry>
-            </visual>
-        </link>
-        <link name="LZ_ot_Link">
-            <inertial>
-                <origin xyz="0.000375 0.000025 -0.000249652"/>
-                <mass value="3.3"/>
-                <inertia ixx="0.071819941" ixy="-0.000000949" ixz="-0.000008291" iyy="0.071821260" iyz="0.000015866"
-                         izz="0.014937474"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/lz_ot_link.glb"/>
-                </geometry>
-            </visual>
-            <collision>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/lz_ot_link.glb"/>
-                </geometry>
-            </collision>
-        </link>
-        <link name="Left_Wheel_Link">
-            <inertial>
-                <origin xyz="-0.000003 -0.000309 -0.000002"/>
-                <mass value="1.5"/>
-                <inertia ixx="0.001541661" ixy="-0.000000034" ixz="0.00000004" iyy="0.002763727" iyz="-0.000000005"
-                         izz="0.001541722"/>
-            </inertial>
-            <visual>
+		<!-- Slamtec support casters; origins = swivel axis at z=-0.02235. -->
+		<xacro:SlamtecCaster prefix="fl" parent="AGV_link" xyz="0.166550 0.172542 -0.02235" movable="${chassis_movable}"/>
+		<xacro:SlamtecCaster prefix="fr" parent="AGV_link" xyz="0.167213 -0.169457 -0.02235" movable="${chassis_movable}"/>
+		<xacro:SlamtecCaster prefix="rl" parent="AGV_link" xyz="-0.167449 0.171865 -0.02235" movable="${chassis_movable}"/>
+		<xacro:SlamtecCaster prefix="rr" parent="AGV_link" xyz="-0.166756 -0.170134 -0.02235" movable="${chassis_movable}"/>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/Left_Wheel_Link.STL"/>
-                </geometry>
-            </visual>
-            <collision>
+		<link name="chassis_lidar">
+			<xacro:unless value="${isaac}">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find sensor_models)/meshes/slamtec/rplidar_s2.glb"/>
+					</geometry>
+				</visual>
+			</xacro:unless>
+		</link>
+		<joint name="chassis_lidar_joint" type="fixed">
+			<origin xyz="0.18395 0 0.10545"/>
+			<parent link="AGV_link"/>
+			<child link="chassis_lidar"/>
+		</joint>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/Left_Wheel_Link.STL"/>
-                </geometry>
-            </collision>
-        </link>
-        <link name="Pitching_Link">
-            <inertial>
-                <origin xyz="0.040544 -0.00377 0.051728"/>
-                <mass value="1.889"/>
-                <inertia ixx="0.003542953" ixy="0.000140065" ixz="-0.001148746" iyy="0.004845228" iyz="0.000090610"
-                         izz="0.003876594"/>
-            </inertial>
-            <visual>
+		<!-- Nuwa-XB40 on the front panel. nuwa-xb40.glb origin is the front-window
+		     center; +Z is out of the window, +X along the housing. Yaw is 2 deg
+		     outward, pitch 25.5 deg up. GLB node "right camera" is robot +Y (left);
+		     "left camera" is robot -Y. -->
+		<link name="chassis_left_camera">
+			<xacro:unless value="${isaac}">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find sensor_models)/meshes/angstrong/nuwa-xb40.glb"/>
+					</geometry>
+				</visual>
+			</xacro:unless>
+		</link>
+		<joint name="chassis_left_camera_joint" type="fixed">
+			<origin xyz="0.255208 0.093547 0.004313" rpy="-1.126 0 -1.535890"/>
+			<parent link="AGV_link"/>
+			<child link="chassis_left_camera"/>
+		</joint>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/pitching_link.glb"/>
-                </geometry>
-            </visual>
-            <collision>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/pitching_link.glb"/>
-                </geometry>
-            </collision>
-        </link>
-        <link name="RIght_Wheel_Link">
-            <inertial>
-                <origin xyz="0.000003 0.000309 -0.000002"/>
-                <mass value="1.5"/>
-                <inertia ixx="0.001541661" ixy="-0.000000034" ixz="-0.000000004" iyy="0.002763727" iyz="0.000000005"
-                         izz="0.001541722"/>
-            </inertial>
-            <visual>
+		<link name="chassis_right_camera">
+			<xacro:unless value="${isaac}">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find sensor_models)/meshes/angstrong/nuwa-xb40.glb"/>
+					</geometry>
+				</visual>
+			</xacro:unless>
+		</link>
+		<joint name="chassis_right_camera_joint" type="fixed">
+			<origin xyz="0.255573 -0.090158 0.004309" rpy="1.126 0 1.535890"/>
+			<parent link="AGV_link"/>
+			<child link="chassis_right_camera"/>
+		</joint>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/RIght_Wheel_Link.STL"/>
-                </geometry>
-            </visual>
-            <collision>
+		<!-- Ultrasonic pair above the cameras. ultrasonic_04.glb origin is the
+		     front-face center; +Z points out of the face, +X to the right,
+		     +Y down. Assembly node ultrasonic2 is robot +Y (left); ultrasonic1
+		     is robot -Y. -->
+		<link name="chassis_left_ultrasonic">
+			<xacro:unless value="${isaac}">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find sensor_models)/meshes/ultrasonic/ultrasonic_04.glb"/>
+					</geometry>
+				</visual>
+			</xacro:unless>
+		</link>
+		<joint name="chassis_left_ultrasonic_joint" type="fixed">
+			<origin xyz="0.262604 0.101614 0.052707" rpy="-1.570796 0.002800 -1.568770"/>
+			<parent link="AGV_link"/>
+			<child link="chassis_left_ultrasonic"/>
+		</joint>
 
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/RIght_Wheel_Link.STL"/>
-                </geometry>
-            </collision>
-        </link>
-        <link name="Yaw_Link">
-            <inertial>
-                <origin xyz="0.000074 -0.000620 0.071221"/>
-                <mass value="1.144"/>
-                <inertia ixx="0.002602468" ixy="-0.000000583" ixz="-0.000000644" iyy="0.002202746" iyz="-0.000043725"
-                         izz="0.001228552"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/yaw_link.glb"/>
-                </geometry>
-            </visual>
-            <collision>
-                <geometry>
-                    <mesh filename="file://$(find unitree_g1d_description)/meshes/yaw_link.glb"/>
-                </geometry>
-            </collision>
-        </link>
-        <joint name="Left_Wheel_Joint" type="continuous">
-            <origin xyz="0.000225030065905006 0.2031 -0.0265"/>
-            <parent link="AGV_link"/>
-            <child link="Left_Wheel_Link"/>
-            <axis xyz="0 -1 0"/>
-            <limit lower="-3.1416" upper="3.1416" effort="8" velocity="100"/>
-        </joint>
-        <joint name="Right_Wheel_Joint" type="continuous">
-            <origin xyz="0.000225030065905024 -0.2031 -0.0265"/>
-            <parent link="AGV_link"/>
-            <child link="RIght_Wheel_Link"/>
-            <axis xyz="0 1 0"/>
-            <limit lower="-3.1416" upper="3.1416" effort="8" velocity="100"/>
-        </joint>
-        <joint name="LZ_ot_Joint" type="fixed">
-            <origin xyz="-0.000162639876214998 0 0.5275"/>
-            <parent link="AGV_link"/>
-            <child link="LZ_ot_Link"/>
-        </joint>
-        <joint name="LZ_mt_Joint" type="prismatic">
-            <origin xyz="0.000387669942120007 0 0.00999999999999995"/>
-            <parent link="LZ_ot_Link"/>
-            <child link="LZ_mt_Link"/>
-            <axis xyz="0 0 1"/>
-            <limit lower="0" upper="0.21" effort="500" velocity="0.05"/>
-        </joint>
-        <joint name="LZ_it_Joint" type="prismatic">
-            <origin xyz="0.0013627 0.00020167 0.018"/>
-            <parent link="LZ_mt_Link"/>
-            <child link="LZ_it_Link"/>
-            <axis xyz="0 0 1"/>
-            <limit lower="0" upper="0.21" effort="500" velocity="0.05"/>
-        </joint>
-        <joint name="Pitching_Joint" type="fixed">
-            <origin xyz="-0.0013627 -0.00020167 0.008"/>
-            <parent link="LZ_it_Link"/>
-            <child link="Pitching_Link"/>
-        </joint>
-        <joint name="Yaw_Joint" type="revolute">
-            <origin xyz="0.0555 0.0002165 0.066"/>
-            <parent link="Pitching_Link"/>
-            <child link="Yaw_Link"/>
-            <axis xyz="0 1 0"/>
-            <limit lower="-0.04363" upper="2.3562" effort="80" velocity="5"/>
-        </joint>
-    </xacro:macro>
+		<link name="chassis_right_ultrasonic">
+			<xacro:unless value="${isaac}">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find sensor_models)/meshes/ultrasonic/ultrasonic_04.glb"/>
+					</geometry>
+				</visual>
+			</xacro:unless>
+		</link>
+		<joint name="chassis_right_ultrasonic_joint" type="fixed">
+			<origin xyz="0.263009 -0.098386 0.052707" rpy="-1.570796 0.000343 -1.568772"/>
+			<parent link="AGV_link"/>
+			<child link="chassis_right_ultrasonic"/>
+		</joint>
+
+		<!-- Slamtec drive wheels: visual mesh; collision = Y-axis cylinder. -->
+		<link name="Left_Wheel_Link">
+			<inertial>
+				<origin xyz="-0.000003 -0.000309 -0.000002"/>
+				<mass value="1.5"/>
+				<inertia ixx="0.001541661" ixy="-0.000000034" ixz="0.00000004" iyy="0.002763727" iyz="-0.000000005"
+								 izz="0.001541722"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find component_models)/meshes/slamtec/drive_wheel.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 -0.003 0" rpy="${PI/2} 0 0"/>
+				<geometry>
+					<cylinder radius="0.0849" length="0.0682"/>
+				</geometry>
+			</collision>
+		</link>
+		<link name="Right_Wheel_Link">
+			<inertial>
+				<origin xyz="0.000003 0.000309 -0.000002"/>
+				<mass value="1.5"/>
+				<inertia ixx="0.001541661" ixy="-0.000000034" ixz="-0.000000004" iyy="0.002763727" iyz="0.000000005"
+								 izz="0.001541722"/>
+			</inertial>
+			<visual>
+				<origin rpy="0 0 ${PI}"/>
+				<geometry>
+					<mesh filename="file://$(find component_models)/meshes/slamtec/drive_wheel.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0.003 0" rpy="${PI/2} 0 0"/>
+				<geometry>
+					<cylinder radius="0.0849" length="0.0682"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="Left_Wheel_Joint" type="${wheel_joint_type}">
+			<origin xyz="0.000225030065905006 0.2031 -0.0265"/>
+			<parent link="AGV_link"/>
+			<child link="Left_Wheel_Link"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="-3.1416" upper="3.1416" effort="8" velocity="100"/>
+		</joint>
+		<joint name="Right_Wheel_Joint" type="${wheel_joint_type}">
+			<origin xyz="0.000225030065905024 -0.2031 -0.0265"/>
+			<parent link="AGV_link"/>
+			<child link="Right_Wheel_Link"/>
+			<axis xyz="0 1 0"/>
+			<limit lower="-3.1416" upper="3.1416" effort="8" velocity="100"/>
+		</joint>
+	</xacro:macro>
 </robot>

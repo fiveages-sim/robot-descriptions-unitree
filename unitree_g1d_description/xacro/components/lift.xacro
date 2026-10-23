@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- 3-stage lift column (LZ_*) + waist pitch/yaw stage (Pitching / Yaw).
+	     Attaches to AGV_link; body mounts on Yaw_Link. -->
+	<xacro:macro name="UnitreeG1DLift">
+		<link name="LZ_ot_Link">
+			<inertial>
+				<origin xyz="0.000375 0.000025 -0.000249652"/>
+				<mass value="3.3"/>
+				<inertia ixx="0.071819941" ixy="-0.000000949" ixz="-0.000008291" iyy="0.071821260" iyz="0.000015866"
+								 izz="0.014937474"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_ot_link.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_ot_link.glb"/>
+				</geometry>
+			</collision>
+		</link>
+		<link name="LZ_mt_Link">
+			<inertial>
+				<origin xyz="0.000494 -0.000062 0.216016"/>
+				<mass value="3.3"/>
+				<inertia ixx="0.057352663" ixy="0" ixz="0" iyy="0.05735287" iyz="0" izz="0.012847336"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_mt_link.glb"/>
+				</geometry>
+			</visual>
+		</link>
+		<link name="LZ_it_Link">
+			<inertial>
+				<origin xyz="-0.001566 -0.000192 -0.199159"/>
+				<mass value="3.4"/>
+				<inertia ixx="0.068209705" ixy="-0.00000153" ixz="0.000139907" iyy="0.068182916" iyz="-0.000006575"
+								 izz="0.010584232"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_it_link.glb"/>
+				</geometry>
+			</visual>
+		</link>
+		<link name="Pitching_Link">
+			<inertial>
+				<origin xyz="0.040544 -0.00377 0.051728"/>
+				<mass value="1.889"/>
+				<inertia ixx="0.003542953" ixy="0.000140065" ixz="-0.001148746" iyy="0.004845228" iyz="0.000090610"
+								 izz="0.003876594"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/pitching_link.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/pitching_link.glb"/>
+				</geometry>
+			</collision>
+		</link>
+		<link name="Yaw_Link">
+			<inertial>
+				<origin xyz="0.000074 -0.000620 0.071221"/>
+				<mass value="1.144"/>
+				<inertia ixx="0.002602468" ixy="-0.000000583" ixz="-0.000000644" iyy="0.002202746" iyz="-0.000043725"
+								 izz="0.001228552"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/yaw_link.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/yaw_link.glb"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="LZ_ot_Joint" type="fixed">
+			<origin xyz="-0.000162639876214998 0 0.5275"/>
+			<parent link="AGV_link"/>
+			<child link="LZ_ot_Link"/>
+		</joint>
+		<joint name="LZ_mt_Joint" type="prismatic">
+			<origin xyz="0.000387669942120007 0 0.00999999999999995"/>
+			<parent link="LZ_ot_Link"/>
+			<child link="LZ_mt_Link"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="0" upper="0.21" effort="500" velocity="0.05"/>
+		</joint>
+		<joint name="LZ_it_Joint" type="prismatic">
+			<origin xyz="0.0013627 0.00020167 0.018"/>
+			<parent link="LZ_mt_Link"/>
+			<child link="LZ_it_Link"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="0" upper="0.21" effort="500" velocity="0.05"/>
+		</joint>
+		<joint name="Pitching_Joint" type="fixed">
+			<origin xyz="-0.0013627 -0.00020167 0.008"/>
+			<parent link="LZ_it_Link"/>
+			<child link="Pitching_Link"/>
+		</joint>
+		<joint name="Yaw_Joint" type="revolute">
+			<origin xyz="0.0555 0.0002165 0.066"/>
+			<parent link="Pitching_Link"/>
+			<child link="Yaw_Link"/>
+			<axis xyz="0 1 0"/>
+			<limit lower="-0.04363" upper="2.3562" effort="80" velocity="5"/>
+		</joint>
+	</xacro:macro>
+</robot>

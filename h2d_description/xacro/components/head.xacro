@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!-- H2D head pitch and yaw. Parent is waist_pitch_link. -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="UnitreeH2DHead">
+		<link name="head_pitch_link">
+			<inertial>
+				<origin xyz="0.000126 0.018817 0.052939" rpy="0 0 0"/>
+				<mass value="1.82"/>
+				<inertia ixx="0.005386858" ixy="-0.000000033" ixz="0.000020867" iyy="0.005324406" iyz="-0.000007491" izz="0.001409942"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/head_pitch_link.stl"/>
+				</geometry>
+				<material name="head_pitch_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/head_pitch_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="head_pitch_joint" type="revolute">
+			<origin xyz="-0.0010421 -0.085791 0.45073" rpy="0 -0.017453 0"/>
+			<parent link="waist_pitch_link"/>
+			<child link="head_pitch_link"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="-0.5236" upper="0.83775" effort="50" velocity="10"/>
+		</joint>
+		<link name="head_yaw_link">
+			<inertial>
+				<origin xyz="0.023654 -0.000734 0.042315" rpy="0 0 0"/>
+				<mass value="1.3"/>
+				<inertia ixx="0.004367405" ixy="-0.00000739" ixz="0.000456883" iyy="0.005352667" iyz="0.000007463" izz="0.004136928"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/head_yaw_link.stl"/>
+				</geometry>
+				<material name="head_yaw_link_color">
+					<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find h2d_description)/meshes/head_yaw_link.stl"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="head_yaw_joint" type="revolute">
+			<origin xyz="-4.2095E-05 0.0189 0.1335" rpy="0 0 0"/>
+			<parent link="head_pitch_link"/>
+			<child link="head_yaw_link"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="-1.7453" upper="1.7453" effort="50" velocity="10"/>
+		</joint>
+	</xacro:macro>
+</robot>

@@ -16,7 +16,8 @@ Quadrupeds (Go1, Go2, A1, B2, Aliengo) live in [robot-descriptions-quadruped](ht
 | `xacro/torso.xacro` (`UnitreeG1Torso`) | G1, G1-D |
 | `xacro/arm.xacro` (`UnitreeG1Arm`) | G1, G1-D |
 | `xacro/head.xacro` (`UnitreeG1Head`) | G1, G1-D |
-| `xacro/eefs.xacro` (`UnitreeG1Eefs`: `none` / `rubber_hand` / `revo2` / `dex3`) | G1, G1-D, R1-D |
+| `xacro/eefs.xacro` (`UnitreeG1Eefs`: `none` / `rubber_hand` / `revo2` / `dex3` / `dex1`) | G1, G1-D, R1-D, H2D |
+| [`unitree_dex_description`](unitree_dex_description/) (`UnitreeDex1`, `UnitreeDex3`) | G1, G1-D, R1-D, H2D |
 
 ## Common Commands
 
@@ -39,6 +40,10 @@ ros2 launch robot_common_launch manipulator.launch.py robot:=unitree_g1d
 # Wheeled R1-D (no end effector by default)
 ros2 launch robot_common_launch manipulator.launch.py robot:=unitree_r1d
 ros2 launch robot_common_launch manipulator.launch.py robot:=unitree_r1d type:=dex3
+
+# Wheeled H2D (Dex1 gripper)
+ros2 launch robot_common_launch manipulator.launch.py robot:=h2d
+ros2 launch robot_common_launch humanoid.launch.py robot:=unitree_g1 type:=dex1
 ```
 
 These packages are licensed under [Apache-2.0](LICENSE). Upstream model sources are listed in [NOTICE](NOTICE).

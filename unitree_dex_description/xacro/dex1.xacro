@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!--
+  Unitree Dex1 parallel jaw. G1 / G1-D / H2D mount it through UnitreeG1Eefs type:=dex1.
+  name="left" yields left_dex1_* . Both sides use the same meshes and inertials.
+  Actuated joint: ${name}_gripper_joint; ${name}_gripper_joint1 mimics it (airbot-style).
+  OCS2 planning: robot_common_launch injects eef_fixed_joints:=true → jaws become fixed
+  (same as Revo / XHand); ros2_control keeps eef_fixed:=false for adaptive_gripper.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:property name="PI" value="3.1415926535897931"/>
+	<!-- camera:=true adds camera.glb (identity on base) + optical frame from sensor PCA. -->
+	<xacro:macro name="UnitreeDex1" params="name eef_fixed:=false camera:=false">
+		<xacro:property name="prefix" value="${name}_"/>
+		<xacro:property name="eef_is_fixed" value="${str(eef_fixed).lower() in ['1', 'true', 'yes', 'on']}"/>
+		<xacro:property name="finger_joint_type" value="${'fixed' if eef_is_fixed else 'prismatic'}"/>
+		<xacro:property name="enable_camera" value="${str(camera).lower() in ['1', 'true', 'yes', 'on']}"/>
+
+		<link name="${prefix}dex1_base_link">
+			<inertial>
+				<origin xyz="0.043853 -0.0001306 1.4003E-05" />
+				<mass value="0.19138"/>
+				<inertia ixx="7.4842E-05" ixy="1.6252E-07" ixz="-8.0516E-09" iyy="5.861E-05" iyz="-3.5931E-08" izz="3.9364E-05"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/base.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/base.glb"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<link name="${prefix}dex1_finger_link_1">
+			<inertial>
+				<origin xyz="0.073453 -0.011173 0.0086355" />
+				<mass value="0.086783"/>
+				<inertia ixx="2.5583E-05" ixy="5.1557E-07" ixz="-6.3178E-07" iyy="1.4549E-05" iyz="7.8542E-08" izz="3.6013E-05"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/finger.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/finger.glb"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${prefix}gripper_joint" type="${finger_joint_type}">
+			<parent link="${prefix}dex1_base_link"/>
+			<child link="${prefix}dex1_finger_link_1"/>
+			<xacro:unless value="${eef_is_fixed}">
+				<axis xyz="0 -1 0"/>
+				<limit lower="-0.02" upper="0.0245" effort="20" velocity="0.2"/>
+			</xacro:unless>
+		</joint>
+
+		<link name="${prefix}dex1_finger_link_2">
+			<inertial>
+				<origin xyz="0.073453 0.011173 -0.0086355" />
+				<mass value="0.086783"/>
+				<inertia ixx="2.5583E-05" ixy="-5.1557E-07" ixz="6.3178E-07" iyy="1.4549E-05" iyz="7.8542E-08" izz="3.6013E-05"/>
+			</inertial>
+			<visual>
+				<origin rpy="${PI} 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/finger.glb"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin rpy="${PI} 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/finger.glb"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="${prefix}gripper_joint1" type="${finger_joint_type}">
+			<parent link="${prefix}dex1_base_link"/>
+			<child link="${prefix}dex1_finger_link_2"/>
+			<xacro:unless value="${eef_is_fixed}">
+				<axis xyz="0 1 0"/>
+				<limit lower="-0.02" upper="0.0245" effort="20" velocity="0.2"/>
+				<mimic joint="${prefix}gripper_joint" multiplier="1" offset="0"/>
+			</xacro:unless>
+		</joint>
+
+		<!-- camera.glb shares base origin; optical TF from sensor-material plane (Z out, Y down). -->
+		<xacro:if value="${enable_camera}">
+			<link name="${prefix}dex1_camera_link">
+				<visual>
+					<geometry>
+						<mesh filename="file://$(find unitree_dex_description)/meshes/dex1/camera.glb"/>
+					</geometry>
+				</visual>
+			</link>
+			<joint name="${prefix}dex1_camera_joint" type="fixed">
+				<parent link="${prefix}dex1_base_link"/>
+				<child link="${prefix}dex1_camera_link"/>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+			</joint>
+			<link name="${prefix}dex1_camera_optical_frame"/>
+			<joint name="${prefix}dex1_camera_optical_joint" type="fixed">
+				<parent link="${prefix}dex1_camera_link"/>
+				<child link="${prefix}dex1_camera_optical_frame"/>
+				<origin xyz="0.05382 0 0.06201" rpy="-2.1817 0 -1.5708"/>
+			</joint>
+		</xacro:if>
+	</xacro:macro>
+</robot>

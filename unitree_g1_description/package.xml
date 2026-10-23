@@ -8,6 +8,7 @@
     <license>TODO</license>
 
     <exec_depend>robot_common_launch</exec_depend>
+    <exec_depend>unitree_dex_description</exec_depend>
     <depend>brainco_description</depend>
     <depend>unitree_ros2_control</depend>
 

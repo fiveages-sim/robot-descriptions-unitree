@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+  Component-wise description for Unitree H2D.
+  type: chassis | body | head | left_arm | right_arm | left_gripper | right_gripper
+-->
+<robot name="h2d_component" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="chassis"/>
+	<xacro:arg name="eef_fixed_joints" default="false"/>
+
+	<xacro:include filename="$(find h2d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/body.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/head.xacro"/>
+	<xacro:include filename="$(find h2d_description)/xacro/components/arm.xacro"/>
+	<xacro:include filename="$(find unitree_dex_description)/xacro/dex1.xacro"/>
+
+	<xacro:if value="${'$(arg type)' == 'chassis'}">
+		<xacro:UnitreeH2DChassis/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'body'}">
+		<link name="pelvis_link"/>
+		<xacro:UnitreeH2DBody/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'head'}">
+		<link name="waist_pitch_link"/>
+		<xacro:UnitreeH2DHead/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'left_arm'}">
+		<link name="waist_pitch_link"/>
+		<xacro:UnitreeH2DArm name="left"/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'right_arm'}">
+		<link name="waist_pitch_link"/>
+		<xacro:UnitreeH2DArm name="right"/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'left_gripper'}">
+		<xacro:UnitreeDex1 name="left" eef_fixed="$(arg eef_fixed_joints)"/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'right_gripper'}">
+		<xacro:UnitreeDex1 name="right" eef_fixed="$(arg eef_fixed_joints)"/>
+	</xacro:if>
+</robot>

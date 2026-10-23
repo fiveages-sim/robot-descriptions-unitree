@@ -2,14 +2,19 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<!--
-	Shared end effectors for Unitree G1 / G1-D.
-	type: none | rubber_hand | revo2 | dex3
-	Parent frames: left/right_wrist_yaw_link
+	Shared end effectors for Unitree G1 / G1-D / H2D.
+	type: none | rubber_hand | revo2 | dex3 | dex1
+	Parent frames: left/right_tcp (flange on UnitreeG1Arm).
+	eef_fixed: OCS2 planning injects eef_fixed_joints:=true (robot_common_launch);
+	  freezes Dex1 jaws / Dex3+Revo2 fingers. ros2_control keeps false for EE controllers.
 	-->
-	<xacro:macro name="UnitreeG1Eefs" params="type:=rubber_hand eef_fixed:=false">
+	<xacro:include filename="$(find unitree_dex_description)/xacro/dex1.xacro"/>
+	<xacro:include filename="$(find unitree_dex_description)/xacro/dex3.xacro"/>
+
+	<xacro:macro name="UnitreeG1Eefs" params="type:=rubber_hand eef_fixed:=false camera:=false">
 
 		<xacro:if value="${type == 'none'}">
-			<!-- bare wrist -->
+			<!-- bare flange: left/right_tcp from the arm -->
 		</xacro:if>
 
 	<xacro:if value="${type == 'rubber_hand'}">
@@ -42,13 +47,13 @@
 			<xacro:UnitreeG1Hand name="right" direction="-1"/>
 
 			<joint name="left_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0.0415 0.003 0"/>
-				<parent link="left_wrist_yaw_link"/>
+				<origin xyz="0 0.003 0"/>
+				<parent link="left_tcp"/>
 				<child link="left_hand_base"/>
 			</joint>
 			<joint name="right_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0.0415 -0.003 0"/>
-				<parent link="right_wrist_yaw_link"/>
+				<origin xyz="0 -0.003 0"/>
+				<parent link="right_tcp"/>
 				<child link="right_hand_base"/>
 			</joint>
 		</xacro:if>
@@ -59,435 +64,47 @@
 			<xacro:BrainCoHand name="right" direction="-1" use_flange="true" fixed_joints="${eef_fixed}"/>
 
 			<joint name="left_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0.0415 0 0"/>
-				<parent link="left_wrist_yaw_link"/>
+				<origin xyz="0 0 0"/>
+				<parent link="left_tcp"/>
 				<child link="left_flange"/>
 			</joint>
 
 			<joint name="right_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0.0415 0 0"/>
-				<parent link="right_wrist_yaw_link"/>
+				<origin xyz="0 0 0"/>
+				<parent link="right_tcp"/>
 				<child link="right_flange"/>
 			</joint>
 		</xacro:if>
 
 		<xacro:if value="${type == 'dex3'}">
-			<!-- Dex3 left -->
-			<link name="left_hand_palm_link">
-				<inertial>
-					<origin xyz="0.06214634836 -0.00050869656 -0.00058171093" rpy="0 0 0"/>
-					<mass value="0.37283854"/>
-					<inertia ixx="0.00027535181027" ixy="-0.00001595519465" ixz="-0.00000242161890" iyy="0.00053951827219" iyz="-0.00000042279435" izz="0.00039623390907"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_palm_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_palm_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_index_0_link">
-				<inertial>
-					<origin xyz="0.03547435774 0.00082788768 0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00000601573947" ixy="-0.00000050770784" ixz="-0.00000027839003" iyy="0.00001274699945" iyz="0.00000016088850" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_index_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_index_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_index_1_link">
-				<inertial>
-					<origin xyz="0.02628192939 0.00171735242 -0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000153561368" ixy="-0.00000003422130" ixz="-0.00000002549885" iyy="0.00000461267817" iyz="-0.00000000823881" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_index_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_index_1_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_middle_0_link">
-				<inertial>
-					<origin xyz="0.03547435774 0.00082788768 0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00000601573947" ixy="-0.00000050770784" ixz="-0.00000027839003" iyy="0.00001274699945" iyz="0.00000016088850" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_middle_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_middle_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_middle_1_link">
-				<inertial>
-					<origin xyz="0.02628192939 0.00171735242 -0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000153561368" ixy="-0.00000003422130" ixz="-0.00000002549885" iyy="0.00000461267817" iyz="-0.00000000823881" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_middle_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_middle_1_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_thumb_0_link">
-				<inertial>
-					<origin xyz="-0.00088424580 -0.00863407079 0.00094429336" rpy="0 0 0"/>
-					<mass value="0.08623657"/>
-					<inertia ixx="0.00001602919238" ixy="0.00000010683177" ixz="0.00000016728875" iyy="0.00001451795012" iyz="-0.00000051094752" izz="0.00001637877663"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_thumb_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_thumb_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_thumb_1_link">
-				<inertial>
-					<origin xyz="-0.00082788768 -0.03547435774 -0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00001274699945" ixy="-0.00000050770784" ixz="0.00000016088850" iyy="0.00000601573947" iyz="-0.00000027839003" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_thumb_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="-0.001 -0.032 0" rpy="0 0 0"/>
-					<geometry>
-						<box size="0.02 0.03 0.02"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="left_hand_thumb_2_link">
-				<inertial>
-					<origin xyz="-0.00171735242 -0.02628192939 0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000461267817" ixy="-0.00000003422130" ixz="-0.00000000823881" iyy="0.00000153561368" iyz="-0.00000002549885" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_thumb_2_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/left_hand_thumb_2_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
+			<xacro:UnitreeDex3 name="left" direction="1" fixed_joints="${eef_fixed}"/>
+			<xacro:UnitreeDex3 name="right" direction="-1" fixed_joints="${eef_fixed}"/>
 			<joint name="left_hand_palm_joint" type="fixed">
-				<origin xyz="0.0415 0.003 0" rpy="0 0 0"/>
-				<parent link="left_wrist_yaw_link"/>
+				<origin xyz="0 0.003 0" rpy="0 0 0"/>
+				<parent link="left_tcp"/>
 				<child link="left_hand_palm_link"/>
 			</joint>
-			<joint name="left_hand_index_0_joint" type="revolute">
-				<origin xyz="0.0777 0.0016 0.0285" rpy="0 0 0"/>
-				<parent link="left_hand_palm_link"/>
-				<child link="left_hand_index_0_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.57079632" upper="0" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="left_hand_index_1_joint" type="revolute">
-				<origin xyz="0.0458 0 0" rpy="0 0 0"/>
-				<parent link="left_hand_index_0_link"/>
-				<child link="left_hand_index_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.74532925" upper="0" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="left_hand_middle_0_joint" type="revolute">
-				<origin xyz="0.0777 0.0016 -0.0285" rpy="0 0 0"/>
-				<parent link="left_hand_palm_link"/>
-				<child link="left_hand_middle_0_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.57079632" upper="0" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="left_hand_middle_1_joint" type="revolute">
-				<origin xyz="0.0458 0 0" rpy="0 0 0"/>
-				<parent link="left_hand_middle_0_link"/>
-				<child link="left_hand_middle_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.74532925" upper="0" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="left_hand_thumb_0_joint" type="revolute">
-				<origin xyz="0.0255 0 0" rpy="0 0 0"/>
-				<parent link="left_hand_palm_link"/>
-				<child link="left_hand_thumb_0_link"/>
-				<axis xyz="0 1 0"/>
-				<limit lower="-1.04719755" upper="1.04719755" effort="2.45" velocity="6.857"/>
-			</joint>
-			<joint name="left_hand_thumb_1_joint" type="revolute">
-				<origin xyz="-0.0025 -0.0193 0" rpy="0 0 0"/>
-				<parent link="left_hand_thumb_0_link"/>
-				<child link="left_hand_thumb_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-0.72431163" upper="1.04719755" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="left_hand_thumb_2_joint" type="revolute">
-				<origin xyz="0 -0.0458 0" rpy="0 0 0"/>
-				<parent link="left_hand_thumb_1_link"/>
-				<child link="left_hand_thumb_2_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="0" upper="1.74532925" effort="1.4" velocity="12"/>
-			</joint>
-			<!-- Dex3 right -->
-			<link name="right_hand_palm_link">
-				<inertial>
-					<origin xyz="0.06214634836 0.00050869656 -0.00058171093" rpy="0 0 0"/>
-					<mass value="0.37283854"/>
-					<inertia ixx="0.00027535181027" ixy="0.00001595519465" ixz="-0.00000242161890" iyy="0.00053951827219" iyz="0.00000042279435" izz="0.00039623390907"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_palm_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_palm_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_index_0_link">
-				<inertial>
-					<origin xyz="0.03547435774 -0.00082788768 0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00000601573947" ixy="0.00000050770784" ixz="-0.00000027839003" iyy="0.00001274699945" iyz="-0.00000016088850" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_index_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_index_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_index_1_link">
-				<inertial>
-					<origin xyz="0.02628192939 -0.00171735242 -0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000153561368" ixy="0.00000003422130" ixz="-0.00000002549885" iyy="0.00000461267817" iyz="0.00000000823881" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_index_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_index_1_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_middle_0_link">
-				<inertial>
-					<origin xyz="0.03547435774 -0.00082788768 0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00000601573947" ixy="0.00000050770784" ixz="-0.00000027839003" iyy="0.00001274699945" iyz="-0.00000016088850" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_middle_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_middle_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_middle_1_link">
-				<inertial>
-					<origin xyz="0.02628192939 -0.00171735242 -0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000153561368" ixy="0.00000003422130" ixz="-0.00000002549885" iyy="0.00000461267817" iyz="0.00000000823881" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_middle_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_middle_1_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_thumb_0_link">
-				<inertial>
-					<origin xyz="-0.00088424580 0.00863407079 0.00094429336" rpy="0 0 0"/>
-					<mass value="0.08623657"/>
-					<inertia ixx="0.00001602919238" ixy="-0.00000010683177" ixz="0.00000016728875" iyy="0.00001451795012" iyz="0.00000051094752" izz="0.00001637877663"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_thumb_0_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_thumb_0_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_thumb_1_link">
-				<inertial>
-					<origin xyz="-0.00082788768 0.03547435774 -0.00038089960" rpy="0 0 0"/>
-					<mass value="0.05885070"/>
-					<inertia ixx="0.00001274699945" ixy="0.00000050770784" ixz="0.00000016088850" iyy="0.00000601573947" iyz="0.00000027839003" izz="0.00001234543582"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_thumb_1_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="-0.001 0.032 0" rpy="0 0 0"/>
-					<geometry>
-						<box size="0.02 0.03 0.02"/>
-					</geometry>
-				</collision>
-			</link>
-			<link name="right_hand_thumb_2_link">
-				<inertial>
-					<origin xyz="-0.00171735242 0.02628192939 0.00010778879" rpy="0 0 0"/>
-					<mass value="0.02030626"/>
-					<inertia ixx="0.00000461267817" ixy="0.00000003422130" ixz="-0.00000000823881" iyy="0.00000153561368" iyz="0.00000002549885" izz="0.00000386625776"/>
-				</inertial>
-				<visual>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_thumb_2_link.STL"/>
-					</geometry>
-				</visual>
-				<collision>
-					<origin xyz="0 0 0" rpy="0 0 0"/>
-					<geometry>
-						<mesh filename="file://$(find unitree_g1_description)/meshes/hand/right_hand_thumb_2_link.STL"/>
-					</geometry>
-				</collision>
-			</link>
 			<joint name="right_hand_palm_joint" type="fixed">
-				<origin xyz="0.0415 -0.003 0" rpy="0 0 0"/>
-				<parent link="right_wrist_yaw_link"/>
+				<origin xyz="0 -0.003 0" rpy="0 0 0"/>
+				<parent link="right_tcp"/>
 				<child link="right_hand_palm_link"/>
-			</joint>
-			<joint name="right_hand_index_0_joint" type="revolute">
-				<origin xyz="0.0777 -0.0016 0.0285" rpy="0 0 0"/>
-				<parent link="right_hand_palm_link"/>
-				<child link="right_hand_index_0_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="0" upper="1.57079632" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="right_hand_index_1_joint" type="revolute">
-				<origin xyz="0.0458 0 0" rpy="0 0 0"/>
-				<parent link="right_hand_index_0_link"/>
-				<child link="right_hand_index_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="0" upper="1.74532925" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="right_hand_middle_0_joint" type="revolute">
-				<origin xyz="0.0777 -0.0016 -0.0285" rpy="0 0 0"/>
-				<parent link="right_hand_palm_link"/>
-				<child link="right_hand_middle_0_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="0" upper="1.57079632" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="right_hand_middle_1_joint" type="revolute">
-				<origin xyz="0.0458 0 0" rpy="0 0 0"/>
-				<parent link="right_hand_middle_0_link"/>
-				<child link="right_hand_middle_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="0" upper="1.74532925" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="right_hand_thumb_0_joint" type="revolute">
-				<origin xyz="0.0255 0 0" rpy="0 0 0"/>
-				<parent link="right_hand_palm_link"/>
-				<child link="right_hand_thumb_0_link"/>
-				<axis xyz="0 1 0"/>
-				<limit lower="-1.04719755" upper="1.04719755" effort="2.45" velocity="6.857"/>
-			</joint>
-			<joint name="right_hand_thumb_1_joint" type="revolute">
-				<origin xyz="-0.0025 0.0193 0" rpy="0 0 0"/>
-				<parent link="right_hand_thumb_0_link"/>
-				<child link="right_hand_thumb_1_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.04719755" upper="0.72431163" effort="1.4" velocity="12"/>
-			</joint>
-			<joint name="right_hand_thumb_2_joint" type="revolute">
-				<origin xyz="0 0.0458 0" rpy="0 0 0"/>
-				<parent link="right_hand_thumb_1_link"/>
-				<child link="right_hand_thumb_2_link"/>
-				<axis xyz="0 0 1"/>
-				<limit lower="-1.74532925" upper="0" effort="1.4" velocity="12"/>
 			</joint>
 		</xacro:if>
 
+		<xacro:if value="${type == 'dex1'}">
+			<xacro:UnitreeDex1 name="left" eef_fixed="${eef_fixed}" camera="${camera}"/>
+			<xacro:UnitreeDex1 name="right" eef_fixed="${eef_fixed}" camera="${camera}"/>
+			<joint name="left_base_joint" type="fixed">
+				<origin xyz="0 0 0"/>
+				<parent link="left_tcp"/>
+				<child link="left_dex1_base_link"/>
+			</joint>
+			<joint name="right_base_joint" type="fixed">
+				<origin xyz="0 0 0"/>
+				<parent link="right_tcp"/>
+				<child link="right_dex1_base_link"/>
+			</joint>
+		</xacro:if>
 
 	</xacro:macro>
 

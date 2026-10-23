@@ -1,0 +1,326 @@
+; Unitree G1-D — full-body WBC (ocs2_wbc_controller / full_body.launch.py)
+; =====================================================================
+; Fixed base (wheels locked via chassis_joints_movable:=false).
+; State / input (18): [LZ_mt | LZ_it | Yaw | torso_yaw | left×7 | right×7]
+; Head is fixed on G1-D (no head DOFs in the reduced model).
+; Frames: base_footprint / torso_link / left|right_tcp (arm flange)
+; Dex1 jaws (+ mimic) listed for movable-URDF fallback; Dex3/Revo2 fingers are
+; fixed by xacro in the planning URDF (eef_fixed_joints:=true).
+
+model_information
+{
+    manipulatorModelType    0
+
+    baseFrame               "base_footprint"
+    eeFrame                 "left_tcp"
+    eeFrame1                "right_tcp"
+    bodyFrame               "torso_link"
+    headFrame               "head_link"
+
+    removeJoints
+    {
+        [0]   "left_gripper_joint"
+        [1]   "right_gripper_joint"
+        [2]   "left_gripper_joint1"
+        [3]   "right_gripper_joint1"
+        [4]   "Left_Wheel_Joint"
+        [5]   "Right_Wheel_Joint"
+    }
+}
+
+model_settings
+{
+    usePreComputation       true
+    recompileLibraries      true
+}
+
+initialState
+{
+    arm
+    {
+        (0,0)   0.0     ; LZ_mt_Joint
+        (1,0)   0.0     ; LZ_it_Joint
+        (2,0)   0.0     ; Yaw_Joint
+        (3,0)   0.0     ; torso_yaw_joint
+        (4,0)   0.0     ; left ×7
+        (5,0)   0.0
+        (6,0)   0.0
+        (7,0)   0.0
+        (8,0)   0.0
+        (9,0)   0.0
+        (10,0)  0.0
+        (11,0)  0.0     ; right ×7
+        (12,0)  0.0
+        (13,0)  0.0
+        (14,0)  0.0
+        (15,0)  0.0
+        (16,0)  0.0
+        (17,0)  0.0
+    }
+}
+
+initialModeSchedule
+{
+    eventTimes
+    {
+    }
+
+    modeSequence
+    {
+        [0]
+        {
+            bodyMode "HM_DUAL_CUSTOM_LOCK_FIXED_BASE"
+            headMode "HEAD_DISABLE"
+        }
+    }
+}
+
+ddp
+{
+    algorithm                       SLQ
+    nThreads                        5
+    threadPriority                  50
+    maxNumIterations                1
+    minRelCost                      0.1
+    constraintTolerance             1e-3
+    displayInfo                     false
+    displayShortSummary             false
+    checkNumericalStability         false
+    debugPrintRollout               false
+    debugCaching                    false
+    AbsTolODE                       1e-5
+    RelTolODE                       1e-3
+    maxNumStepsPerSecond            100000
+    timeStep                        1e-3
+    backwardPassIntegratorType      ODE45
+    constraintPenaltyInitialValue   20.0
+    constraintPenaltyIncreaseRate   2.0
+    preComputeRiccatiTerms          true
+    useFeedbackPolicy               false
+    strategy                        LINE_SEARCH
+    lineSearch
+    {
+        minStepLength                   1e-2
+        maxStepLength                   1.0
+        hessianCorrectionStrategy       DIAGONAL_SHIFT
+        hessianCorrectionMultiple       1e-3
+    }
+}
+
+mpc
+{
+    timeHorizon                     1.0
+    solutionTimeWindow              0.2
+    coldStart                       false
+    debugPrint                      false
+    mpcDesiredFrequency             100
+    mrtDesiredFrequency             500
+}
+
+rollout
+{
+    AbsTolODE                       1e-5
+    RelTolODE                       1e-3
+    timeStep                        1e-2
+    integratorType                  ODE45
+    maxNumStepsPerSecond            100000
+    checkNumericalStability         false
+}
+
+bodyTrackingEE
+{
+    activate  true
+    muPosition 5.0
+    muOrientation 5.0
+}
+
+headTrackingEE
+{
+    activate  false
+    muPosition 5.0
+    muOrientation 5.0
+}
+
+; Input dim = 18
+inputCost
+{
+    R
+    {
+        arm
+        {
+            scaling 1e-3
+            (0,0)   10.0    ; LZ_mt
+            (1,1)   10.0    ; LZ_it
+            (2,2)   5.0     ; Yaw pitch
+            (3,3)   2.0     ; torso_yaw
+            (4,4)   1.0     ; left
+            (5,5)   1.0
+            (6,6)   1.0
+            (7,7)   1.0
+            (8,8)   0.5
+            (9,9)   0.5
+            (10,10) 0.5
+            (11,11) 1.0     ; right
+            (12,12) 1.0
+            (13,13) 1.0
+            (14,14) 1.0
+            (15,15) 0.5
+            (16,16) 0.5
+            (17,17) 0.5
+        }
+    }
+}
+
+endEffector
+{
+    muPosition                      10.0
+    muOrientation                   5.0
+}
+
+finalEndEffector
+{
+    muPosition                      20.0
+    muOrientation                   10.0
+}
+
+bodyRelative
+{
+    activate                        true
+    xLowerBound                     0.00
+    xUpperBound                     0.25
+    muPosition                      5.0
+    muOrientation                   5.0
+}
+
+bimanualCoupling
+{
+    activate                        true
+    muPosition                      50.0
+    muOrientation                   25.0
+}
+
+; No head DOFs after body×4
+headInputStart                          4
+
+waistLock
+{
+    activate                        true
+    numJoints                       4
+}
+
+headCoupling
+{
+    activate                        false
+}
+
+headMidpointGaze
+{
+    activate                    false
+}
+
+customJointLock
+{
+    activate                        true
+    lockedJointIndices
+    {
+    }
+}
+
+homeJointReference
+{
+    activate                        true
+    activateDefault                 true
+    mu                              1e-3
+    excludeJointIndices
+    {
+    }
+}
+
+armLock
+{
+    activate                        true
+    leftNumJoints                   7
+    rightNumJoints                  7
+}
+
+jointPositionLimits
+{
+    activate                        true
+    mu                              1e-3
+    delta                           1e-3
+}
+
+jointVelocityLimits
+{
+    mu                              1e-2
+    delta                           1e-2
+
+    lowerBound
+    {
+        arm
+        {
+            (0,0)  -0.1
+            (1,0)  -0.1
+            (2,0)  -1.5
+            (3,0)  -1.5
+            (4,0)  -3.14
+            (5,0)  -3.14
+            (6,0)  -3.14
+            (7,0)  -3.14
+            (8,0)  -3.14
+            (9,0)  -3.14
+            (10,0) -3.14
+            (11,0) -3.14
+            (12,0) -3.14
+            (13,0) -3.14
+            (14,0) -3.14
+            (15,0) -3.14
+            (16,0) -3.14
+            (17,0) -3.14
+        }
+    }
+
+    upperBound
+    {
+        arm
+        {
+            (0,0)  0.1
+            (1,0)  0.1
+            (2,0)  1.5
+            (3,0)  1.5
+            (4,0)  3.14
+            (5,0)  3.14
+            (6,0)  3.14
+            (7,0)  3.14
+            (8,0)  3.14
+            (9,0)  3.14
+            (10,0) 3.14
+            (11,0) 3.14
+            (12,0) 3.14
+            (13,0) 3.14
+            (14,0) 3.14
+            (15,0) 3.14
+            (16,0) 3.14
+            (17,0) 3.14
+        }
+    }
+}
+
+; Same pairs as unitree_g1_description/config/ocs2/task.info (torso ↔ shoulder_yaw / elbow).
+selfCollision
+{
+    activate                        true
+    mu                              1e-3
+    delta                           1e-4
+    minimumDistance                 0.01
+    collisionObjectPairs
+    {
+    }
+    collisionLinkPairs
+    {
+        [0] "torso_link, left_shoulder_yaw_link",
+        [1] "torso_link, left_elbow_link",
+        [2] "torso_link, right_shoulder_yaw_link",
+        [3] "torso_link, right_elbow_link",
+    }
+}

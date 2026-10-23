@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<!--
+  Unitree Dex3 hand (one side). name="left"/"right"; direction 1=left, -1=right.
+  One mesh set (left CAD). Right side places each mesh with rpy=π about X.
+  Kinematics and inertials use Y-mirror via direction. Palm mount stays on the robot.
+  OCS2 planning: robot_common_launch injects eef_fixed_joints:=true → finger joints
+  become fixed (same as Revo1/Revo2); do not list them in .info removeJoints.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="UnitreeDex3" params="name direction:=1 fixed_joints:=false">
+        <xacro:property name="prefix" value="${name}_"/>
+        <xacro:property name="dir" value="${float(direction)}"/>
+        <xacro:property name="joints_are_fixed" value="${str(fixed_joints).lower() in ['1', 'true', 'yes', 'on']}"/>
+        <xacro:property name="joint_type" value="${'fixed' if joints_are_fixed else 'revolute'}"/>
+        <xacro:property name="mesh_roll" value="${0.0 if dir > 0 else 3.141592653589793}"/>
+        <!-- thumb_1←index_0, thumb_2←index_1: Ry(π) then Rz(π/2) → rpy π 0 -π/2; right → 0 0 π/2 -->
+        <xacro:property name="thumb_phalanx_r" value="${3.141592653589793 if dir > 0 else 0.0}"/>
+        <xacro:property name="thumb_phalanx_y" value="${-1.5707963267948966 if dir > 0 else 1.5707963267948966}"/>
+
+        <link name="${prefix}hand_palm_link">
+            <inertial>
+                <origin xyz="0.06214634836 ${dir*-0.00050869656} -0.00058171093" rpy="0 0 0"/>
+                <mass value="0.37283854"/>
+                <inertia ixx="0.00027535181027" ixy="${dir*-0.00001595519465}" ixz="-0.00000242161890"
+                         iyy="0.00053951827219" iyz="${dir*-0.00000042279435}" izz="0.00039623390907"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/palm_link.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/palm_link.glb"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="${prefix}hand_index_0_link">
+            <inertial>
+                <origin xyz="0.03547435774 ${dir*0.00082788768} 0.00038089960" rpy="0 0 0"/>
+                <mass value="0.05885070"/>
+                <inertia ixx="0.00000601573947" ixy="${dir*-0.00000050770784}" ixz="-0.00000027839003"
+                         iyy="0.00001274699945" iyz="${dir*0.00000016088850}" izz="0.00001234543582"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}hand_index_1_link">
+            <inertial>
+                <origin xyz="0.02628192939 ${dir*0.00171735242} -0.00010778879" rpy="0 0 0"/>
+                <mass value="0.02030626"/>
+                <inertia ixx="0.00000153561368" ixy="${dir*-0.00000003422130}" ixz="-0.00000002549885"
+                         iyy="0.00000461267817" iyz="${dir*-0.00000000823881}" izz="0.00000386625776"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- Middle finger reuses the index GLBs (same geometry). -->
+        <link name="${prefix}hand_middle_0_link">
+            <inertial>
+                <origin xyz="0.03547435774 ${dir*0.00082788768} 0.00038089960" rpy="0 0 0"/>
+                <mass value="0.05885070"/>
+                <inertia ixx="0.00000601573947" ixy="${dir*-0.00000050770784}" ixz="-0.00000027839003"
+                         iyy="0.00001274699945" iyz="${dir*0.00000016088850}" izz="0.00001234543582"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}hand_middle_1_link">
+            <inertial>
+                <origin xyz="0.02628192939 ${dir*0.00171735242} -0.00010778879" rpy="0 0 0"/>
+                <mass value="0.02030626"/>
+                <inertia ixx="0.00000153561368" ixy="${dir*-0.00000003422130}" ixz="-0.00000002549885"
+                         iyy="0.00000461267817" iyz="${dir*-0.00000000823881}" izz="0.00000386625776"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="${prefix}hand_thumb_0_link">
+            <inertial>
+                <origin xyz="-0.00088424580 ${dir*-0.00863407079} 0.00094429336" rpy="0 0 0"/>
+                <mass value="0.08623657"/>
+                <inertia ixx="0.00001602919238" ixy="${dir*0.00000010683177}" ixz="0.00000016728875"
+                         iyy="0.00001451795012" iyz="${dir*-0.00000051094752}" izz="0.00001637877663"/>
+            </inertial>
+            <visual>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/thumb_0.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${mesh_roll} 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/thumb_0.glb"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}hand_thumb_1_link">
+            <inertial>
+                <origin xyz="-0.00082788768 ${dir*-0.03547435774} -0.00038089960" rpy="0 0 0"/>
+                <mass value="0.05885070"/>
+                <inertia ixx="0.00001274699945" ixy="${dir*-0.00000050770784}" ixz="0.00000016088850"
+                         iyy="0.00000601573947" iyz="${dir*-0.00000027839003}" izz="0.00001234543582"/>
+            </inertial>
+            <visual>
+                <origin rpy="${thumb_phalanx_r} 0 ${thumb_phalanx_y}"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${thumb_phalanx_r} 0 ${thumb_phalanx_y}"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_0.glb"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}hand_thumb_2_link">
+            <inertial>
+                <origin xyz="-0.00171735242 ${dir*-0.02628192939} 0.00010778879" rpy="0 0 0"/>
+                <mass value="0.02030626"/>
+                <inertia ixx="0.00000461267817" ixy="${dir*-0.00000003422130}" ixz="-0.00000000823881"
+                         iyy="0.00000153561368" iyz="${dir*-0.00000002549885}" izz="0.00000386625776"/>
+            </inertial>
+            <visual>
+                <origin rpy="${thumb_phalanx_r} 0 ${thumb_phalanx_y}"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="${thumb_phalanx_r} 0 ${thumb_phalanx_y}"/>
+                <geometry>
+                    <mesh filename="file://$(find unitree_dex_description)/meshes/dex3/index_1.glb"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}hand_index_0_joint" type="${joint_type}">
+            <origin xyz="0.0777 ${dir*0.0016} 0.0285" rpy="0 0 0"/>
+            <parent link="${prefix}hand_palm_link"/>
+            <child link="${prefix}hand_index_0_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <limit lower="${-1.57079632 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.57079632}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_index_1_joint" type="${joint_type}">
+            <origin xyz="0.0458 0 0" rpy="0 0 0"/>
+            <parent link="${prefix}hand_index_0_link"/>
+            <child link="${prefix}hand_index_1_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <limit lower="${-1.74532925 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.74532925}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_middle_0_joint" type="${joint_type}">
+            <origin xyz="0.0777 ${dir*0.0016} -0.0285" rpy="0 0 0"/>
+            <parent link="${prefix}hand_palm_link"/>
+            <child link="${prefix}hand_middle_0_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <limit lower="${-1.57079632 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.57079632}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_middle_1_joint" type="${joint_type}">
+            <origin xyz="0.0458 0 0" rpy="0 0 0"/>
+            <parent link="${prefix}hand_middle_0_link"/>
+            <child link="${prefix}hand_middle_1_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <limit lower="${-1.74532925 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.74532925}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_thumb_0_joint" type="${joint_type}">
+            <origin xyz="0.0255 0 0" rpy="0 0 0"/>
+            <parent link="${prefix}hand_palm_link"/>
+            <child link="${prefix}hand_thumb_0_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 1 0"/>
+                <limit lower="-1.04719755" upper="1.04719755" effort="2.45" velocity="6.857"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_thumb_1_joint" type="${joint_type}">
+            <origin xyz="-0.0025 ${dir*-0.0193} 0" rpy="0 0 0"/>
+            <parent link="${prefix}hand_thumb_0_link"/>
+            <child link="${prefix}hand_thumb_1_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <!-- left [-0.724, 1.047]; right is negate+swap -->
+                <limit lower="${-0.72431163 if dir > 0 else -1.04719755}"
+                       upper="${1.04719755 if dir > 0 else 0.72431163}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+        <joint name="${prefix}hand_thumb_2_joint" type="${joint_type}">
+            <origin xyz="0 ${dir*-0.0458} 0" rpy="0 0 0"/>
+            <parent link="${prefix}hand_thumb_1_link"/>
+            <child link="${prefix}hand_thumb_2_link"/>
+            <xacro:unless value="${joints_are_fixed}">
+                <axis xyz="0 0 1"/>
+                <limit lower="${0 if dir > 0 else -1.74532925}" upper="${1.74532925 if dir > 0 else 0}"
+                       effort="1.4" velocity="12"/>
+            </xacro:unless>
+        </joint>
+    </xacro:macro>
+</robot>
