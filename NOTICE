@@ -1,0 +1,17 @@
+Unitree Robot Descriptions
+Copyright Zhenbiao@FiveAges
+
+This repository is maintained by FiveAges (fiveages-sim). See LICENSE for
+terms governing FiveAges-authored and -adapted material in this repository.
+
+Third-party robot models and assets may be subject to separate terms. The
+table below lists upstream sources documented in package README files.
+
+| Package                    | Upstream reference                                      | Upstream license (as stated)   |
+|----------------------------|---------------------------------------------------------|--------------------------------|
+| unitree_g1_description     | https://github.com/unitreerobotics/unitree_ros          | See upstream repository        |
+| unitree_g1d_description    | Unitree G1-D official URDF dump                         | See Unitree terms              |
+| unitree_r1d_description    | Unitree R1D official URDF dump                          | See Unitree terms              |
+
+Meshes may be repainted or simplified for simulation. Use of third-party
+assets remains subject to their respective upstream licenses.

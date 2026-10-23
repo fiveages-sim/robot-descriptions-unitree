@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="unitree_r1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="none"/>
+
+	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/body.xacro"/>
+	<xacro:UnitreeR1DChassis/>
+	<xacro:UnitreeR1DBody/>
+
+	<!-- Optional end effector from G1 hand macros -->
+	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>
+</robot>

@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!--
+	Unitree G1 head. Mount origin defaults match legged G1 (z=-0.044).
+	G1-D uses xyz_z:=-0.054 (10 mm lower relative to torso_link).
+	-->
+	<xacro:macro name="UnitreeG1Head" params="parent:=torso_link xyz_x:=0.0039635 xyz_y:=0 xyz_z:=-0.044">
+		<link name="head_link">
+			<inertial>
+				<origin xyz="0.005267 0.000299 0.449869"/>
+				<mass value="1.036"/>
+				<inertia ixx="0.004085051" ixy="-2.543E-06" ixz="-6.9455E-05" iyy="0.004185212" iyz="-3.726E-06"
+							 izz="0.001807911"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.obj"/>
+				</geometry>
+			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.obj"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="head_joint" type="fixed">
+			<origin xyz="${xyz_x} ${xyz_y} ${xyz_z}"/>
+			<parent link="${parent}"/>
+			<child link="head_link"/>
+		</joint>
+	</xacro:macro>
+
+</robot>

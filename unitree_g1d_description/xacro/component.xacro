@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot name="unitree_g1d_component" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="chassis"/>
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/body.xacro"/>
+	<xacro:if value="${'$(arg type)' == 'chassis'}">
+		<xacro:UnitreeG1DChassis/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'body'}">
+		<link name="Yaw_Link"/>
+		<xacro:UnitreeG1DBody/>
+	</xacro:if>
+</robot>

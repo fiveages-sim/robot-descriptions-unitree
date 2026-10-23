@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="UnitreeG1DBody">
+		<link name="logo_link">
+			<inertial>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<mass value="0.001"/>
+				<inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/logo_link.STL"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/logo_link.STL"/>
+				</geometry>
+			</collision>
+		</link>
+		<link name="torso_link">
+			<inertial>
+				<origin xyz="0.002601 0.000257 0.153719" rpy="0 0 0"/>
+				<mass value="8.562"/>
+				<inertia ixx="0.065674966" ixy="-8.597E-05" ixz="-0.001737252" iyy="0.053535188" iyz="8.6899E-05" izz="0.030808125"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/torso_link.STL"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/torso_link.STL"/>
+				</geometry>
+			</collision>
+		</link>
+		<joint name="torso_Joint" type="revolute">
+			<origin xyz="-0.0023536 -0.000048782 0.104008566" rpy="0 0 0"/>
+			<parent link="Yaw_Link"/>
+			<child link="torso_link"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="-2.7053" upper="2.7053" effort="30" velocity="5"/>
+		</joint>
+		<joint name="logo_joint" type="fixed">
+			<origin xyz="0.0039635 0 -0.054" rpy="0 0 0"/>
+			<parent link="torso_link"/>
+			<child link="logo_link"/>
+		</joint>
+	</xacro:macro>
+</robot>

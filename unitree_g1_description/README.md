@@ -16,14 +16,20 @@ colcon build --packages-up-to unitree_g1_description --symlink-install
   source ~/ros2_ws/install/setup.bash
   ros2 launch robot_common_launch humanoid.launch.py
   ```
-  ![Unitree G1](../../.images/unitree_g1.png)
+  ![Unitree G1](../.images/unitree_g1.png)
 
 * G1 with BrainCo Revo2
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch robot_common_launch humanoid.launch.py type:=revo2
   ```
-  ![Unitree G1](../../.images/unitree_g1_revo2.png)
+  ![Unitree G1](../.images/unitree_g1_revo2.png)
+
+* G1 with Unitree Dex3
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch robot_common_launch humanoid.launch.py type:=dex3
+  ```
 
 ### 2.2 Visualize from Unitree SDK2 DDS
 * Unitree Mujoco

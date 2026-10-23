@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>unitree_g1d_description</name>
+    <version>0.0.0</version>
+    <description>Unitree G1-D wheeled dual-arm; reuses G1 arm/head/hand macros</description>
+
+    <maintainer email="biao876990970@hotmail.com">Huang Zhenbiao</maintainer>
+    <license>Apache-2.0</license>
+
+    <exec_depend>robot_common_launch</exec_depend>
+    <exec_depend>unitree_g1_description</exec_depend>
+    <exec_depend>brainco_description</exec_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+
+</package>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot name="unitree_r1d_component" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="chassis"/>
+	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_r1d_description)/xacro/components/body.xacro"/>
+	<xacro:if value="${'$(arg type)' == 'chassis'}">
+		<xacro:UnitreeR1DChassis/>
+	</xacro:if>
+	<xacro:if value="${'$(arg type)' == 'body'}">
+		<link name="lift_stage2_link"/>
+		<xacro:UnitreeR1DBody/>
+	</xacro:if>
+</robot>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot name="unitree_g1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:arg name="type" default="dex3"/>
+
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/chassis.xacro"/>
+	<xacro:include filename="$(find unitree_g1d_description)/xacro/components/body.xacro"/>
+	<xacro:UnitreeG1DChassis/>
+	<xacro:UnitreeG1DBody/>
+
+	<!-- Shared G1 head (G1-D mount is 10 mm lower) -->
+	<xacro:include filename="$(find unitree_g1_description)/xacro/head.xacro"/>
+	<xacro:UnitreeG1Head xyz_z="-0.054"/>
+
+	<!-- Shared G1 arms -->
+	<xacro:include filename="$(find unitree_g1_description)/xacro/arm.xacro"/>
+	<xacro:UnitreeG1Arm name="left" direction="1"/>
+	<xacro:UnitreeG1Arm name="right" direction="-1"/>
+
+	<!-- Shared G1 end effectors (default Dex3) -->
+	<xacro:include filename="$(find unitree_g1_description)/xacro/hand.xacro"/>
+</robot>
