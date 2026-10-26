@@ -1,7 +1,10 @@
-; Unitree G1-D — full-body WBC (ocs2_wbc_controller / full_body.launch.py)
+; Unitree G1-D — fixed-base WBC fallback (ocs2_wbc_controller)
 ; =====================================================================
+; Default full-body task is mobile_base_tcp.info (virtual diff vx/omega).
+; Switch back here via info_file_name: fixed_base_tcp and
+; fsm_default_humanoid_mode: HM_DUAL_CUSTOM_LOCK_FIXED_BASE.
 ; Fixed base (wheels locked via chassis_joints_movable:=false).
-; State / input (18): [LZ_mt | LZ_it | Yaw | torso_yaw | left×7 | right×7]
+; State / input (18): [LZ_mt | LZ_it | waist_pitch | waist_yaw | left×7 | right×7]
 ; Head is fixed on G1-D (no head DOFs in the reduced model).
 ; Frames: base_footprint / torso_link / left|right_tcp (arm flange)
 ; Dex1 jaws (+ mimic) listed for movable-URDF fallback; Dex3/Revo2 fingers are
@@ -25,6 +28,14 @@ model_information
         [3]   "right_gripper_joint1"
         [4]   "Left_Wheel_Joint"
         [5]   "Right_Wheel_Joint"
+        [6]   "fl_caster_swivel_joint"
+        [7]   "fl_caster_wheel_joint"
+        [8]   "fr_caster_swivel_joint"
+        [9]   "fr_caster_wheel_joint"
+        [10]  "rl_caster_swivel_joint"
+        [11]  "rl_caster_wheel_joint"
+        [12]  "rr_caster_swivel_joint"
+        [13]  "rr_caster_wheel_joint"
     }
 }
 
@@ -40,8 +51,8 @@ initialState
     {
         (0,0)   0.0     ; LZ_mt_Joint
         (1,0)   0.0     ; LZ_it_Joint
-        (2,0)   0.0     ; Yaw_Joint
-        (3,0)   0.0     ; torso_yaw_joint
+        (2,0)   0.0     ; waist_pitch_joint
+        (3,0)   0.0     ; waist_yaw_joint
         (4,0)   0.0     ; left ×7
         (5,0)   0.0
         (6,0)   0.0
@@ -152,7 +163,7 @@ inputCost
             (0,0)   10.0    ; LZ_mt
             (1,1)   10.0    ; LZ_it
             (2,2)   5.0     ; Yaw pitch
-            (3,3)   2.0     ; torso_yaw
+            (3,3)   2.0     ; waist_yaw
             (4,4)   1.0     ; left
             (5,5)   1.0
             (6,6)   1.0

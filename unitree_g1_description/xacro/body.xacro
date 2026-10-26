@@ -1,86 +1,87 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-	<xacro:include filename="$(find unitree_g1_description)/xacro/torso.xacro"/>
+    <xacro:include filename="$(find unitree_g1_description)/xacro/torso.xacro"/>
 
-	<xacro:macro name="UnitreeG1Body">
-		<!-- Pelvis + 3-DoF waist; torso/logo/sensors via UnitreeG1Torso -->
+    <xacro:macro name="UnitreeG1Body">
+        <!-- Pelvis + 3-DoF waist; torso/logo/sensors via UnitreeG1Torso -->
 
-		<link name="base_link"/>
-		<joint name="base_link_joint" type="fixed">
-			<parent link="base_link"/>
-			<child link="pelvis"/>
-		</joint>
+        <link name="base_link"/>
+        <joint name="base_link_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="pelvis"/>
+        </joint>
 
-		<link name="pelvis">
-			<inertial>
-				<origin xyz="0 0 -0.07605"/>
-				<mass value="3.813"/>
-				<inertia ixx="0.010549" ixy="0" ixz="2.1E-06" iyy="0.0093089" iyz="0" izz="0.0079184"/>
-			</inertial>
-			<visual>
-				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/pelvis.obj"/>
-				</geometry>
-			</visual>
-		</link>
+        <link name="pelvis">
+            <inertial>
+                <origin xyz="0 0 -0.07605"/>
+                <mass value="3.813"/>
+                <inertia ixx="0.010549" ixy="0" ixz="2.1E-06" iyy="0.0093089" iyz="0" izz="0.0079184"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find unitree_g1_description)/meshes/body/pelvis.glb"/>
+                </geometry>
+            </visual>
+        </link>
 
-		<link name="waist_yaw_link">
-			<inertial>
-				<origin xyz="0.003494 0.000233 0.018034"/>
-				<mass value="0.214"/>
-				<inertia ixx="0.00010673" ixy="2.703E-06" ixz="-7.631E-06" iyy="0.00010422" iyz="-2.01E-07" izz="0.0001625"/>
-			</inertial>
-			<visual>
-				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/waist_yaw.obj"/>
-				</geometry>
-			</visual>
-		</link>
+        <link name="waist_yaw_link">
+            <inertial>
+                <origin xyz="0.003494 0.000233 0.018034"/>
+                <mass value="0.214"/>
+                <inertia ixx="0.00010673" ixy="2.703E-06" ixz="-7.631E-06" iyy="0.00010422" iyz="-2.01E-07"
+                         izz="0.0001625"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find unitree_g1_description)/meshes/body/waist_yaw.glb"/>
+                </geometry>
+            </visual>
+        </link>
 
-		<joint name="waist_yaw_joint" type="revolute">
-			<parent link="pelvis"/>
-			<child link="waist_yaw_link"/>
-			<axis xyz="0 0 1"/>
-			<limit lower="-2.618" upper="2.618" effort="88" velocity="32"/>
-		</joint>
+        <joint name="waist_yaw_joint" type="revolute">
+            <parent link="pelvis"/>
+            <child link="waist_yaw_link"/>
+            <axis xyz="0 0 1"/>
+            <limit lower="-2.618" upper="2.618" effort="88" velocity="32"/>
+        </joint>
 
-		<link name="waist_roll_link">
-			<inertial>
-				<origin xyz="0 2.3E-05 0"/>
-				<mass value="0.086"/>
-				<inertia ixx="7.079E-06" ixy="0" ixz="0" iyy="6.339E-06" iyz="0" izz="8.245E-06"/>
-			</inertial>
-			<visual>
-				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/waist_roll.obj"/>
-				</geometry>
-			</visual>
-		</link>
+        <link name="waist_roll_link">
+            <inertial>
+                <origin xyz="0 2.3E-05 0"/>
+                <mass value="0.086"/>
+                <inertia ixx="7.079E-06" ixy="0" ixz="0" iyy="6.339E-06" iyz="0" izz="8.245E-06"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find unitree_g1_description)/meshes/body/waist_roll.glb"/>
+                </geometry>
+            </visual>
+        </link>
 
-		<joint name="waist_roll_joint" type="revolute">
-			<origin xyz="-0.0039635 0 0.044"/>
-			<parent link="waist_yaw_link"/>
-			<child link="waist_roll_link"/>
-			<axis xyz="1 0 0"/>
-			<limit lower="-0.52" upper="0.52" effort="35" velocity="30"/>
-		</joint>
+        <joint name="waist_roll_joint" type="revolute">
+            <origin xyz="-0.0039635 0 0.044"/>
+            <parent link="waist_yaw_link"/>
+            <child link="waist_roll_link"/>
+            <axis xyz="1 0 0"/>
+            <limit lower="-0.52" upper="0.52" effort="35" velocity="30"/>
+        </joint>
 
-		<xacro:UnitreeG1Torso/>
+        <xacro:UnitreeG1Torso/>
 
-		<joint name="waist_pitch_joint" type="revolute">
-			<parent link="waist_roll_link"/>
-			<child link="torso_link"/>
-			<axis xyz="0 1 0"/>
-			<limit lower="-0.52" upper="0.52" effort="35" velocity="30"/>
-		</joint>
+        <joint name="waist_pitch_joint" type="revolute">
+            <parent link="waist_roll_link"/>
+            <child link="torso_link"/>
+            <axis xyz="0 1 0"/>
+            <limit lower="-0.52" upper="0.52" effort="35" velocity="30"/>
+        </joint>
 
-		<link name="imu_in_pelvis"/>
-		<joint name="imu_in_pelvis_joint" type="fixed">
-			<origin xyz="0.04525 0 -0.08339"/>
-			<parent link="pelvis"/>
-			<child link="imu_in_pelvis"/>
-		</joint>
-	</xacro:macro>
+        <link name="imu_in_pelvis"/>
+        <joint name="imu_in_pelvis_joint" type="fixed">
+            <origin xyz="0.04525 0 -0.08339"/>
+            <parent link="pelvis"/>
+            <child link="imu_in_pelvis"/>
+        </joint>
+    </xacro:macro>
 
 </robot>

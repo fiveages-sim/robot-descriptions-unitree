@@ -11,9 +11,9 @@
 	<xacro:macro name="UnitreeG1DBody">
 		<xacro:UnitreeG1Torso/>
 
-		<joint name="torso_yaw_joint" type="revolute">
+		<joint name="waist_yaw_joint" type="revolute">
 			<origin xyz="-0.0023536 -0.000048782 ${0.104008566 - 0.0098}" rpy="0 0 0"/>
-			<parent link="Yaw_Link"/>
+			<parent link="waist_pitch_link"/>
 			<child link="torso_link"/>
 			<axis xyz="0 0 1"/>
 			<limit lower="-2.7053" upper="2.7053" effort="30" velocity="5"/>

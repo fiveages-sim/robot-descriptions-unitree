@@ -16,7 +16,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/torso.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/torso.glb"/>
 				</geometry>
 			</visual>
 			<collision>
@@ -40,7 +40,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/logo.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/logo.glb"/>
 				</geometry>
 			</visual>
 		</link>

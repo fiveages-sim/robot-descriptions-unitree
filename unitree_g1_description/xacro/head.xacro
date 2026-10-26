@@ -15,12 +15,12 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.glb"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/body/head.glb"/>
 				</geometry>
 			</collision>
 		</link>

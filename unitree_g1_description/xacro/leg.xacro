@@ -15,13 +15,13 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_pitch.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_pitch.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_pitch.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_pitch.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</collision>
@@ -46,12 +46,14 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_roll.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_roll.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_roll.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_roll.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</collision>
 		</link>
@@ -76,13 +78,13 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_yaw.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_yaw.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_yaw.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/hip_yaw.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</collision>
@@ -107,13 +109,13 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/knee.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/knee.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/knee.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/knee.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</collision>
@@ -137,12 +139,14 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_pitch.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_pitch.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_pitch.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_pitch.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</collision>
 		</link>
@@ -166,7 +170,8 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_roll.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/leg/ankle_roll.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>

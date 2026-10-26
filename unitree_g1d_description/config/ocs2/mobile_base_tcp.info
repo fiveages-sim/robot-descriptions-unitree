@@ -1,0 +1,384 @@
+; Unitree G1-D — full-body WBC with differential chassis (ocs2_wbc_controller)
+; ========================================================================
+; manipulatorModelType 1 = WheelBasedMobileManipulator (virtual unicycle).
+; Physical drive wheels + casters stay locked (chassis_joints_movable:=false /
+; removeJoints). Chassis motion is planned as base vx / omega only; WBC publishes
+; /cmd_vel when world→base_footprint TF is available and the base is unlocked.
+; Arm state after removeJoints (Pinocchio 4): [body×4 | left×7 | right×7] = 18
+; Full state = 3 (x,y,yaw) + 18 = 21; full input = 2 (vx,omega) + 18 = 20.
+; headInputStart is the full input index after base+body (no head DOFs; the
+; zero-width window leaves the arms at input 6).
+; customJointLock indices, if filled, are full input indices (LZ_mt = 2).
+; homeJointReference.excludeJointIndices stay arm-segment indices (no base offset).
+; bodyRelative band kept from fixed_base_tcp.
+; Default body mode: HM_DUAL_CUSTOM_LOCK (底盘可动 + 自定义关节锁定). Head is fixed.
+
+model_information
+{
+    manipulatorModelType    1
+
+    baseFrame               "base_footprint"
+    eeFrame                 "left_tcp"
+    eeFrame1                "right_tcp"
+    bodyFrame               "torso_link"
+    headFrame               "head_link"
+
+    ; Dex1 jaws (+ mimic). Dex3/Revo2 fingers are fixed in the planning URDF.
+    ; Drive wheels + Slamtec casters listed for movable-URDF fallback.
+    removeJoints
+    {
+        [0]   "left_gripper_joint"
+        [1]   "right_gripper_joint"
+        [2]   "left_gripper_joint1"
+        [3]   "right_gripper_joint1"
+        [4]   "Left_Wheel_Joint"
+        [5]   "Right_Wheel_Joint"
+        [6]   "fl_caster_swivel_joint"
+        [7]   "fl_caster_wheel_joint"
+        [8]   "fr_caster_swivel_joint"
+        [9]   "fr_caster_wheel_joint"
+        [10]  "rl_caster_swivel_joint"
+        [11]  "rl_caster_wheel_joint"
+        [12]  "rr_caster_swivel_joint"
+        [13]  "rr_caster_wheel_joint"
+    }
+}
+
+model_settings
+{
+    usePreComputation       true
+    recompileLibraries      true
+}
+
+initialState
+{
+    base
+    {
+        wheelBasedMobileManipulator
+        {
+            (0,0)  0.0   ; x [m]
+            (1,0)  0.0   ; y [m]
+            (2,0)  0.0   ; yaw [rad]
+        }
+    }
+
+    arm
+    {
+        (0,0)   0.0     ; LZ_mt_Joint
+        (1,0)   0.0     ; LZ_it_Joint
+        (2,0)   0.0     ; waist_pitch_joint
+        (3,0)   0.0     ; waist_yaw_joint
+        (4,0)   0.0     ; left ×7
+        (5,0)   0.0
+        (6,0)   0.0
+        (7,0)   0.0
+        (8,0)   0.0
+        (9,0)   0.0
+        (10,0)  0.0
+        (11,0)  0.0     ; right ×7
+        (12,0)  0.0
+        (13,0)  0.0
+        (14,0)  0.0
+        (15,0)  0.0
+        (16,0)  0.0
+        (17,0)  0.0
+    }
+}
+
+initialModeSchedule
+{
+    eventTimes
+    {
+    }
+
+    ; Chassis planned (BASE_UNLOCK) + custom joint lock. No head DOFs.
+    modeSequence
+    {
+        [0]
+        {
+            bodyMode "HM_DUAL_CUSTOM_LOCK"
+            headMode "HEAD_DISABLE"
+        }
+    }
+}
+
+ddp
+{
+    algorithm                       SLQ
+    nThreads                        5
+    threadPriority                  50
+    maxNumIterations                1
+    minRelCost                      0.1
+    constraintTolerance             1e-3
+    displayInfo                     false
+    displayShortSummary             false
+    checkNumericalStability         false
+    debugPrintRollout               false
+    debugCaching                    false
+    AbsTolODE                       1e-5
+    RelTolODE                       1e-3
+    maxNumStepsPerSecond            100000
+    timeStep                        1e-3
+    backwardPassIntegratorType      ODE45
+    constraintPenaltyInitialValue   20.0
+    constraintPenaltyIncreaseRate   2.0
+    preComputeRiccatiTerms          true
+    useFeedbackPolicy               false
+    strategy                        LINE_SEARCH
+    lineSearch
+    {
+        minStepLength                   1e-2
+        maxStepLength                   1.0
+        hessianCorrectionStrategy       DIAGONAL_SHIFT
+        hessianCorrectionMultiple       1e-3
+    }
+}
+
+mpc
+{
+    ; Peer mobile_base_tcp (W2 / Zerith H1) uses 0.4 s; 1.0 encouraged early base slides.
+    timeHorizon                     0.4
+    solutionTimeWindow              0.2
+    coldStart                       false
+    debugPrint                      false
+    mpcDesiredFrequency             100
+    mrtDesiredFrequency             400
+}
+
+rollout
+{
+    AbsTolODE                       1e-5
+    RelTolODE                       1e-3
+    timeStep                        1e-2
+    integratorType                  ODE45
+    maxNumStepsPerSecond            100000
+    checkNumericalStability         false
+}
+
+bodyTrackingEE
+{
+    activate  true
+    muPosition 5.0
+    muOrientation 5.0
+}
+
+headTrackingEE
+{
+    activate  false
+    muPosition 5.0
+    muOrientation 5.0
+}
+
+; Input dim = 2 (vx, omega) + 18 joints = 20
+inputCost
+{
+    R
+    {
+        base
+        {
+            wheelBasedMobileManipulator
+            {
+                scaling 1e-1
+                (0,0)   0.8     ; vx [m/s]
+                (1,1)   0.8     ; omega [rad/s]
+            }
+        }
+        arm
+        {
+            scaling 1e-3
+            (0,0)   10.0    ; LZ_mt
+            (1,1)   10.0    ; LZ_it
+            (2,2)   5.0     ; waist_pitch
+            (3,3)   2.0     ; waist_yaw
+            (4,4)   1.0     ; left
+            (5,5)   1.0
+            (6,6)   1.0
+            (7,7)   1.0
+            (8,8)   0.5
+            (9,9)   0.5
+            (10,10) 0.5
+            (11,11) 1.0     ; right
+            (12,12) 1.0
+            (13,13) 1.0
+            (14,14) 1.0
+            (15,15) 0.5
+            (16,16) 0.5
+            (17,17) 0.5
+        }
+    }
+}
+
+endEffector
+{
+    muPosition                      10.0
+    muOrientation                   5.0
+}
+
+finalEndEffector
+{
+    muPosition                      20.0
+    muOrientation                   10.0
+}
+
+bodyRelative
+{
+    activate                        true
+    xLowerBound                     0.00
+    xUpperBound                     0.25
+    muPosition                      5.0
+    muOrientation                   5.0
+}
+
+bimanualCoupling
+{
+    activate                        true
+    muPosition                      50.0
+    muOrientation                   25.0
+}
+
+; Layout: [base(2) | body(4) | left(7) | right(7)]. No head DOFs; index 6 is a
+; zero-width window so arms still start at input 6.
+headInputStart                          6
+
+waistLock
+{
+    activate                        true
+    numJoints                       4
+}
+
+headCoupling
+{
+    activate                        false
+}
+
+headMidpointGaze
+{
+    activate                    false
+}
+
+customJointLock
+{
+    activate                        true
+    ; Empty: CUSTOM_LOCKED (自定义) without hard-locking lift / pitch / yaw.
+    ; Full input indices if filled (LZ_mt_Joint = 2 after vx/omega).
+    lockedJointIndices
+    {
+    }
+}
+
+homeJointReference
+{
+    activate                        true
+    activateDefault                 true
+    mu                              1e-3
+    excludeJointIndices
+    {
+    }
+}
+
+armLock
+{
+    activate                        true
+    leftNumJoints                   7
+    rightNumJoints                  7
+}
+
+jointPositionLimits
+{
+    activate                        true
+    mu                              1e-3
+    delta                           1e-3
+}
+
+; Soft velocity barriers. Base matches this robot's diff_drive caps (±1.0);
+; arm bounds kept from fixed_base_tcp.
+jointVelocityLimits
+{
+    mu                              1e-2
+    delta                           1e-2
+
+    lowerBound
+    {
+        base
+        {
+            wheelBasedMobileManipulator
+            {
+                (0,0)  -1.0     ; vx [m/s]
+                (1,0)  -1.0     ; omega [rad/s]
+            }
+        }
+        arm
+        {
+            (0,0)  -0.1
+            (1,0)  -0.1
+            (2,0)  -1.5
+            (3,0)  -1.5
+            (4,0)  -3.14
+            (5,0)  -3.14
+            (6,0)  -3.14
+            (7,0)  -3.14
+            (8,0)  -3.14
+            (9,0)  -3.14
+            (10,0) -3.14
+            (11,0) -3.14
+            (12,0) -3.14
+            (13,0) -3.14
+            (14,0) -3.14
+            (15,0) -3.14
+            (16,0) -3.14
+            (17,0) -3.14
+        }
+    }
+
+    upperBound
+    {
+        base
+        {
+            wheelBasedMobileManipulator
+            {
+                (0,0)  1.0
+                (1,0)  1.0
+            }
+        }
+        arm
+        {
+            (0,0)  0.1
+            (1,0)  0.1
+            (2,0)  1.5
+            (3,0)  1.5
+            (4,0)  3.14
+            (5,0)  3.14
+            (6,0)  3.14
+            (7,0)  3.14
+            (8,0)  3.14
+            (9,0)  3.14
+            (10,0) 3.14
+            (11,0) 3.14
+            (12,0) 3.14
+            (13,0) 3.14
+            (14,0) 3.14
+            (15,0) 3.14
+            (16,0) 3.14
+            (17,0) 3.14
+        }
+    }
+}
+
+; Same pairs as fixed_base_tcp (torso ↔ shoulder_yaw / elbow).
+selfCollision
+{
+    activate                        true
+    mu                              1e-3
+    delta                           1e-4
+    minimumDistance                 0.01
+    collisionObjectPairs
+    {
+    }
+    collisionLinkPairs
+    {
+        [0] "torso_link, left_shoulder_yaw_link",
+        [1] "torso_link, left_elbow_link",
+        [2] "torso_link, right_shoulder_yaw_link",
+        [3] "torso_link, right_elbow_link",
+    }
+}

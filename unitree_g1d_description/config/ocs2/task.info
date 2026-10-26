@@ -15,8 +15,8 @@ model_information
     {
         [0]   "LZ_mt_Joint"
         [1]   "LZ_it_Joint"
-        [2]   "Yaw_Joint"
-        [3]   "torso_yaw_joint"
+        [2]   "waist_pitch_joint"
+        [3]   "waist_yaw_joint"
         [4]   "Left_Wheel_Joint"
         [5]   "Right_Wheel_Joint"
         [6]   "left_gripper_joint"

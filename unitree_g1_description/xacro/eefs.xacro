@@ -31,7 +31,7 @@
 					</inertial>
 					<visual>
 						<geometry>
-							<mesh filename="file://$(find unitree_g1_description)/meshes/arm/hand.obj" scale="1 ${direction} 1"/>
+							<mesh filename="file://$(find unitree_g1_description)/meshes/arm/hand.glb" scale="1 ${direction} 1"/>
 						</geometry>
 					</visual>
 					<collision>

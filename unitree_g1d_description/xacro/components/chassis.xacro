@@ -175,7 +175,7 @@
 			<origin xyz="0.000225030065905006 0.2031 -0.0265"/>
 			<parent link="AGV_link"/>
 			<child link="Left_Wheel_Link"/>
-			<axis xyz="0 -1 0"/>
+			<axis xyz="0 1 0"/>
 			<limit lower="-3.1416" upper="3.1416" effort="8" velocity="100"/>
 		</joint>
 		<joint name="Right_Wheel_Joint" type="${wheel_joint_type}">

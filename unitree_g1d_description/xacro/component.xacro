@@ -21,7 +21,7 @@
 		<xacro:UnitreeG1DLift/>
 	</xacro:if>
 	<xacro:if value="${'$(arg type)' == 'body'}">
-		<link name="Yaw_Link"/>
+		<link name="waist_pitch_link"/>
 		<xacro:UnitreeG1DBody/>
 	</xacro:if>
 </robot>

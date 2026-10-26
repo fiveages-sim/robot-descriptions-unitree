@@ -20,7 +20,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_pitch.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_pitch.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
@@ -52,7 +52,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_roll.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_roll.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
@@ -84,7 +84,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_yaw.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/shoulder_yaw.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
@@ -121,7 +121,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/elbow.obj"
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/elbow.glb"
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
@@ -153,7 +153,8 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_roll.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_roll.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 		</link>
@@ -178,7 +179,8 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_pitch.obj"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_pitch.glb"
+								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 			<collision>
@@ -215,7 +217,7 @@
 			</inertial>
 			<visual>
 				<geometry>
-					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.obj" scale="1 ${direction} 1"/>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/wrist_yaw.glb" scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
 		</link>

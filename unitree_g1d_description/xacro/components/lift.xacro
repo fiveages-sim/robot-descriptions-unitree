@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<!-- 3-stage lift column (LZ_*) + waist pitch/yaw stage (Pitching / Yaw).
-	     Attaches to AGV_link; body mounts on Yaw_Link. -->
+	<!-- 3-stage lift column (LZ_*) + waist pitch/yaw stage (waist_mount fixed + waist_pitch_joint; official CAD names Pitching_/Yaw_*).
+	     Attaches to AGV_link; body mounts on waist_pitch_link. -->
 	<xacro:macro name="UnitreeG1DLift">
 		<link name="LZ_ot_Link">
 			<inertial>
@@ -32,6 +32,11 @@
 					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_mt_link.glb"/>
 				</geometry>
 			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_mt_link.glb"/>
+				</geometry>
+			</collision>
 		</link>
 		<link name="LZ_it_Link">
 			<inertial>
@@ -45,8 +50,13 @@
 					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_it_link.glb"/>
 				</geometry>
 			</visual>
+			<collision>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1d_description)/meshes/lz_it_link.glb"/>
+				</geometry>
+			</collision>
 		</link>
-		<link name="Pitching_Link">
+		<link name="waist_mount_link">
 			<inertial>
 				<origin xyz="0.040544 -0.00377 0.051728"/>
 				<mass value="1.889"/>
@@ -64,7 +74,7 @@
 				</geometry>
 			</collision>
 		</link>
-		<link name="Yaw_Link">
+		<link name="waist_pitch_link">
 			<inertial>
 				<origin xyz="0.000074 -0.000620 0.071221"/>
 				<mass value="1.144"/>
@@ -102,15 +112,15 @@
 			<axis xyz="0 0 1"/>
 			<limit lower="0" upper="0.21" effort="500" velocity="0.05"/>
 		</joint>
-		<joint name="Pitching_Joint" type="fixed">
+		<joint name="waist_mount_joint" type="fixed">
 			<origin xyz="-0.0013627 -0.00020167 0.008"/>
 			<parent link="LZ_it_Link"/>
-			<child link="Pitching_Link"/>
+			<child link="waist_mount_link"/>
 		</joint>
-		<joint name="Yaw_Joint" type="revolute">
+		<joint name="waist_pitch_joint" type="revolute">
 			<origin xyz="0.0555 0.0002165 0.066"/>
-			<parent link="Pitching_Link"/>
-			<child link="Yaw_Link"/>
+			<parent link="waist_mount_link"/>
+			<child link="waist_pitch_link"/>
 			<axis xyz="0 1 0"/>
 			<limit lower="-0.04363" upper="2.3562" effort="80" velocity="5"/>
 		</joint>
