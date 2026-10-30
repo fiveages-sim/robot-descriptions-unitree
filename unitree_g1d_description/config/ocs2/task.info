@@ -7,7 +7,7 @@ model_information
 {
     manipulatorModelType    0
 
-    baseFrame               "torso_link"
+    baseFrame               "base_footprint"
     eeFrame                 "left_tcp"
     eeFrame1                "right_tcp"
 
