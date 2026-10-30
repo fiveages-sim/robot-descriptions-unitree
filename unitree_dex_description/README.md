@@ -5,7 +5,7 @@ Shared Unitree end effectors. Robots mount them through `UnitreeG1Eefs`.
 | Macro | What it is |
 |-------|------------|
 | `UnitreeDex1` | Parallel gripper. `name` is `left` or `right`. Finger joints are independent prismatic joints. |
-| `UnitreeDex3` | One-sided Dex3 hand. `name` + `direction` (`1` left, `-1` right). One mesh set; right places each mesh with a π roll about X. Palm mount stays on the robot. |
+| `UnitreeDex3` | One-sided Dex3 hand. `name` + `direction` (`1` left, `-1` right). One mesh set; right places each mesh with a π roll about X. Link placement may Y-mirror; **joint limits / angle semantics are the same on both sides**. |
 
 Meshes live in `meshes/dex1` and `meshes/dex3`.
 

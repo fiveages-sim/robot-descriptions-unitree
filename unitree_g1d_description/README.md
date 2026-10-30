@@ -15,7 +15,7 @@ origin z reduced by 9.8 mm so the G1 torso frame sits on the lift stack.
 ## Control
 
 - Split: `ocs2_arm_controller` (dual arms, `config/ocs2/task.info`) + `body_joint_controller`
-- Full body: `ocs2_wbc_controller` (`config/ocs2/mobile_base_tcp.info`, `manipulatorModelType 1`) — virtual differential chassis (`vx` / `omega`) + lift×2 + pitch + torso yaw + arms×14. Default body mode `HM_DUAL_CUSTOM_LOCK` (自定义). Physical wheels and casters stay locked; `/cmd_vel` is published when `world → base_footprint` exists and the base is unlocked.
+- Full body: `ocs2_wbc_controller` (`config/ocs2/mobile_base_tcp.info`, `manipulatorModelType 1`) — virtual differential chassis (`vx` / `omega`) + lift×2 + pitch + torso yaw + arms×14. Default body mode `HM_DUAL_RELATIVE_MOBILE_BASE` (aligned with Zerith H1; base soft limits `vx±0.5` / `ω±1.5`). Physical wheels and casters stay locked; `/cmd_vel` is published when `world → base_footprint` exists and the base is unlocked.
 - Fixed-base fallback: `config/ocs2/fixed_base_tcp.info` with `fsm_default_humanoid_mode: HM_DUAL_CUSTOM_LOCK_FIXED_BASE` (patch via `robot.local.yaml` / control.patch)
 - EE: `type:=dex3` → `left/right_hand_controller`; `type:=dex1` → `adaptive_gripper` on `*_gripper_joint`
 - Wheels fixed by default; `chassis_joints_movable:=true` enables `diff_drive_controller` (navigation). Full-body WBC does not unlock wheel joints.

@@ -2,7 +2,9 @@
 <!--
   Unitree Dex3 hand (one side). name="left"/"right"; direction 1=left, -1=right.
   One mesh set (left CAD). Right side places each mesh with rpy=π about X.
-  Kinematics and inertials use Y-mirror via direction. Palm mount stays on the robot.
+  Link origins / inertials use Y-mirror via direction for placement only.
+  Joint limits and joint-angle semantics are identical on both sides (not mirrored):
+  the same home / command vector is valid for left and right.
   OCS2 planning: robot_common_launch injects eef_fixed_joints:=true → finger joints
   become fixed (same as Revo1/Revo2); do not list them in .info removeJoints.
 -->
@@ -188,8 +190,7 @@
             <child link="${prefix}hand_index_0_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <limit lower="${-1.57079632 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.57079632}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="-1.57079632" upper="0" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
         <joint name="${prefix}hand_index_1_joint" type="${joint_type}">
@@ -198,8 +199,7 @@
             <child link="${prefix}hand_index_1_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <limit lower="${-1.74532925 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.74532925}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="-1.74532925" upper="0" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
         <joint name="${prefix}hand_middle_0_joint" type="${joint_type}">
@@ -208,8 +208,7 @@
             <child link="${prefix}hand_middle_0_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <limit lower="${-1.57079632 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.57079632}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="-1.57079632" upper="0" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
         <joint name="${prefix}hand_middle_1_joint" type="${joint_type}">
@@ -218,8 +217,7 @@
             <child link="${prefix}hand_middle_1_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <limit lower="${-1.74532925 if dir > 0 else 0}" upper="${0 if dir > 0 else 1.74532925}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="-1.74532925" upper="0" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
         <joint name="${prefix}hand_thumb_0_joint" type="${joint_type}">
@@ -237,10 +235,7 @@
             <child link="${prefix}hand_thumb_1_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <!-- left [-0.724, 1.047]; right is negate+swap -->
-                <limit lower="${-0.72431163 if dir > 0 else -1.04719755}"
-                       upper="${1.04719755 if dir > 0 else 0.72431163}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="-0.72431163" upper="1.04719755" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
         <joint name="${prefix}hand_thumb_2_joint" type="${joint_type}">
@@ -249,8 +244,7 @@
             <child link="${prefix}hand_thumb_2_link"/>
             <xacro:unless value="${joints_are_fixed}">
                 <axis xyz="0 0 1"/>
-                <limit lower="${0 if dir > 0 else -1.74532925}" upper="${1.74532925 if dir > 0 else 0}"
-                       effort="1.4" velocity="12"/>
+                <limit lower="0" upper="1.74532925" effort="1.4" velocity="12"/>
             </xacro:unless>
         </joint>
     </xacro:macro>

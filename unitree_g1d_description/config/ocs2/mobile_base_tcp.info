@@ -3,15 +3,15 @@
 ; manipulatorModelType 1 = WheelBasedMobileManipulator (virtual unicycle).
 ; Physical drive wheels + casters stay locked (chassis_joints_movable:=false /
 ; removeJoints). Chassis motion is planned as base vx / omega only; WBC publishes
-; /cmd_vel when world→base_footprint TF is available and the base is unlocked.
+; /cmd_vel when world→base_footprint TF is available and BASE_UNLOCK.
 ; Arm state after removeJoints (Pinocchio 4): [body×4 | left×7 | right×7] = 18
 ; Full state = 3 (x,y,yaw) + 18 = 21; full input = 2 (vx,omega) + 18 = 20.
 ; headInputStart is the full input index after base+body (no head DOFs; the
 ; zero-width window leaves the arms at input 6).
 ; customJointLock indices, if filled, are full input indices (LZ_mt = 2).
 ; homeJointReference.excludeJointIndices stay arm-segment indices (no base offset).
-; bodyRelative band kept from fixed_base_tcp.
-; Default body mode: HM_DUAL_CUSTOM_LOCK (底盘可动 + 自定义关节锁定). Head is fixed.
+; bodyRelative band kept from fixed_base_tcp (align chassis policy with Zerith H1).
+; Default body mode: HM_DUAL_RELATIVE_MOBILE_BASE (peer H1). Head is fixed.
 
 model_information
 {
@@ -91,12 +91,13 @@ initialModeSchedule
     {
     }
 
-    ; Chassis planned (BASE_UNLOCK) + custom joint lock. No head DOFs.
+    ; Chassis planned (BASE_UNLOCK) + bodyRelative band. No head DOFs.
+    ; Aligned with Zerith H1 mobile_base_tcp default.
     modeSequence
     {
         [0]
         {
-            bodyMode "HM_DUAL_CUSTOM_LOCK"
+            bodyMode "HM_DUAL_RELATIVE_MOBILE_BASE"
             headMode "HEAD_DISABLE"
         }
     }
@@ -290,7 +291,7 @@ jointPositionLimits
     delta                           1e-3
 }
 
-; Soft velocity barriers. Base matches this robot's diff_drive caps (±1.0);
+; Soft velocity barriers. Base ±0.5 / ±1.5 aligned with Zerith H1 (W2-class vx);
 ; arm bounds kept from fixed_base_tcp.
 jointVelocityLimits
 {
@@ -303,8 +304,8 @@ jointVelocityLimits
         {
             wheelBasedMobileManipulator
             {
-                (0,0)  -1.0     ; vx [m/s]
-                (1,0)  -1.0     ; omega [rad/s]
+                (0,0)  -0.5     ; vx [m/s]
+                (1,0)  -1.5     ; omega [rad/s]
             }
         }
         arm
@@ -336,8 +337,8 @@ jointVelocityLimits
         {
             wheelBasedMobileManipulator
             {
-                (0,0)  1.0
-                (1,0)  1.0
+                (0,0)  0.5
+                (1,0)  1.5
             }
         }
         arm

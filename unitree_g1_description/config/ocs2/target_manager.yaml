@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    linear_scale: 0.3
+    angular_scale: 0.5
+    enable_vr: true
+
+    # G1 has no base_footprint (only base_link). Default ATM yaml uses
+    # vr_follow_frame=base_footprint + reference_link=head_link2 (W2) — both
+    # missing on G1 → VR calibration / follow TF fails and teleop feels wrong.
+    # split_body / markers: stay in base_link. full_body + WBC: launch/emit
+    # overrides marker_fixed_frame (and mobile modelType) to world.
+    marker_fixed_frame: base_link
+    vr_follow_frame: base_link
+    enable_wbc_head_tracking_marker: false
+
+    # Last head link (head.xacro). Same role as W2 head_link2 / H1 neck_pitch_link.
+    head_link_name: "head_link"
+    # VR headset calibration reference (VRInputHandler)
+    reference_link: "head_link"

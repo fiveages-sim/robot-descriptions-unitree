@@ -4,6 +4,7 @@
 	<!--
 	Shared end effectors for Unitree G1 / G1-D / H2D.
 	type: none | rubber_hand | revo2 | dex3 | dex1
+	left_type / right_type override one side (W2-style). Empty side falls back to type.
 	Parent frames: left/right_tcp (flange on UnitreeG1Arm).
 	eef_fixed: OCS2 planning injects eef_fixed_joints:=true (robot_common_launch);
 	  freezes Dex1 jaws / Dex3+Revo2 fingers. ros2_control keeps false for EE controllers.
@@ -11,101 +12,82 @@
 	<xacro:include filename="$(find unitree_dex_description)/xacro/dex1.xacro"/>
 	<xacro:include filename="$(find unitree_dex_description)/xacro/dex3.xacro"/>
 
-	<xacro:macro name="UnitreeG1Eefs" params="type:=rubber_hand eef_fixed:=false camera:=false">
+	<xacro:macro name="UnitreeG1Hand" params="name direction:=1">
+		<xacro:property name="prefix" value="${name + '_' if name else ''}"/>
+		<link name="${prefix}hand_base">
+			<inertial>
+				<origin xyz="0.05361310808 ${direction*-0.00295905240} 0.00215413091"/>
+				<mass value="0.170"/>
+				<inertia ixx="0.00010099485234748" ixy="${direction*0.00003618590790516}"
+											 ixz="-0.00000074301518642" iyy="0.00028135871571621"
+											 iyz="${direction*-0.00000330189743286}" izz="0.00021894770413514"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<mesh filename="file://$(find unitree_g1_description)/meshes/arm/hand.glb" scale="1 ${direction} 1"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0.07 ${direction*-0.02} 0"/>
+				<geometry>
+					<box size="0.12 0.05 0.1"/>
+				</geometry>
+			</collision>
+		</link>
+	</xacro:macro>
 
-		<xacro:if value="${type == 'none'}">
-			<!-- bare flange: left/right_tcp from the arm -->
+	<xacro:macro name="UnitreeG1EefSide" params="side direction ee eef_fixed camera">
+		<xacro:if value="${ee == 'none' or ee == ''}">
+			<!-- bare flange: ${side}_tcp from the arm -->
 		</xacro:if>
 
-	<xacro:if value="${type == 'rubber_hand'}">
-			<xacro:macro name="UnitreeG1Hand" params="name direction:=1">
-				<xacro:property name="prefix" value="${name + '_' if name else ''}"/>
-				<!-- Hand Link -->
-				<link name="${prefix}hand_base">
-					<inertial>
-						<origin xyz="0.05361310808 ${direction*-0.00295905240} 0.00215413091"/>
-						<mass value="0.170"/>
-						<inertia ixx="0.00010099485234748" ixy="${direction*0.00003618590790516}"
-													 ixz="-0.00000074301518642" iyy="0.00028135871571621"
-													 iyz="${direction*-0.00000330189743286}" izz="0.00021894770413514"/>
-					</inertial>
-					<visual>
-						<geometry>
-							<mesh filename="file://$(find unitree_g1_description)/meshes/arm/hand.glb" scale="1 ${direction} 1"/>
-						</geometry>
-					</visual>
-					<collision>
-						<origin xyz="0.07 ${direction*-0.02} 0"/>
-						<geometry>
-							<box size="0.12 0.05 0.1"/>
-						</geometry>
-					</collision>
-				</link>
-			</xacro:macro>
-
-			<xacro:UnitreeG1Hand name="left" direction="1"/>
-			<xacro:UnitreeG1Hand name="right" direction="-1"/>
-
-			<joint name="left_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0 0.003 0"/>
-				<parent link="left_tcp"/>
-				<child link="left_hand_base"/>
-			</joint>
-			<joint name="right_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0 -0.003 0"/>
-				<parent link="right_tcp"/>
-				<child link="right_hand_base"/>
+		<xacro:if value="${ee == 'rubber_hand'}">
+			<xacro:UnitreeG1Hand name="${side}" direction="${direction}"/>
+			<joint name="${side}_hand_palm_joint" type="fixed" dont_collapse="true">
+				<origin xyz="0 ${direction * 0.003} 0"/>
+				<parent link="${side}_tcp"/>
+				<child link="${side}_hand_base"/>
 			</joint>
 		</xacro:if>
 
-		<xacro:if value="${type == 'revo2'}">
+		<xacro:if value="${ee == 'revo2'}">
+			<xacro:BrainCoHand name="${side}_hand" direction="${direction}" use_flange="true" fixed_joints="${eef_fixed}"/>
+			<joint name="${side}_hand_palm_joint" type="fixed" dont_collapse="true">
+				<origin xyz="0 0 0"/>
+				<parent link="${side}_tcp"/>
+				<child link="${side}_hand_flange"/>
+			</joint>
+		</xacro:if>
+
+		<xacro:if value="${ee == 'dex3'}">
+			<xacro:UnitreeDex3 name="${side}" direction="${direction}" fixed_joints="${eef_fixed}"/>
+			<joint name="${side}_hand_palm_joint" type="fixed">
+				<origin xyz="0 ${direction * 0.003} 0" rpy="0 0 0"/>
+				<parent link="${side}_tcp"/>
+				<child link="${side}_hand_palm_link"/>
+			</joint>
+		</xacro:if>
+
+		<xacro:if value="${ee == 'dex1'}">
+			<xacro:UnitreeDex1 name="${side}" eef_fixed="${eef_fixed}" camera="${camera}"/>
+			<joint name="${side}_base_joint" type="fixed">
+				<origin xyz="0 0 0"/>
+				<parent link="${side}_tcp"/>
+				<child link="${side}_dex1_base_link"/>
+			</joint>
+		</xacro:if>
+	</xacro:macro>
+
+	<xacro:macro name="UnitreeG1Eefs" params="type:=rubber_hand left_type:='' right_type:='' eef_fixed:=false camera:=false">
+		<xacro:property name="ee_left" value="${left_type if left_type != '' else type}"/>
+		<xacro:property name="ee_right" value="${right_type if right_type != '' else type}"/>
+
+		<xacro:if value="${ee_left == 'revo2' or ee_right == 'revo2'}">
 			<xacro:include filename="$(find brainco_description)/xacro/revo2.xacro"/>
-			<xacro:BrainCoHand name="left" direction="1" use_flange="true" fixed_joints="${eef_fixed}"/>
-			<xacro:BrainCoHand name="right" direction="-1" use_flange="true" fixed_joints="${eef_fixed}"/>
-
-			<joint name="left_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0 0 0"/>
-				<parent link="left_tcp"/>
-				<child link="left_flange"/>
-			</joint>
-
-			<joint name="right_hand_palm_joint" type="fixed" dont_collapse="true">
-				<origin xyz="0 0 0"/>
-				<parent link="right_tcp"/>
-				<child link="right_flange"/>
-			</joint>
 		</xacro:if>
 
-		<xacro:if value="${type == 'dex3'}">
-			<xacro:UnitreeDex3 name="left" direction="1" fixed_joints="${eef_fixed}"/>
-			<xacro:UnitreeDex3 name="right" direction="-1" fixed_joints="${eef_fixed}"/>
-			<joint name="left_hand_palm_joint" type="fixed">
-				<origin xyz="0 0.003 0" rpy="0 0 0"/>
-				<parent link="left_tcp"/>
-				<child link="left_hand_palm_link"/>
-			</joint>
-			<joint name="right_hand_palm_joint" type="fixed">
-				<origin xyz="0 -0.003 0" rpy="0 0 0"/>
-				<parent link="right_tcp"/>
-				<child link="right_hand_palm_link"/>
-			</joint>
-		</xacro:if>
-
-		<xacro:if value="${type == 'dex1'}">
-			<xacro:UnitreeDex1 name="left" eef_fixed="${eef_fixed}" camera="${camera}"/>
-			<xacro:UnitreeDex1 name="right" eef_fixed="${eef_fixed}" camera="${camera}"/>
-			<joint name="left_base_joint" type="fixed">
-				<origin xyz="0 0 0"/>
-				<parent link="left_tcp"/>
-				<child link="left_dex1_base_link"/>
-			</joint>
-			<joint name="right_base_joint" type="fixed">
-				<origin xyz="0 0 0"/>
-				<parent link="right_tcp"/>
-				<child link="right_dex1_base_link"/>
-			</joint>
-		</xacro:if>
-
+		<xacro:UnitreeG1EefSide side="left" direction="1" ee="${ee_left}" eef_fixed="${eef_fixed}" camera="${camera}"/>
+		<xacro:UnitreeG1EefSide side="right" direction="-1" ee="${ee_right}" eef_fixed="${eef_fixed}" camera="${camera}"/>
 	</xacro:macro>
 
 </robot>

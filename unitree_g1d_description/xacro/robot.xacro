@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
 <robot name="unitree_g1d" xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<!-- type: none | rubber_hand | revo2 | dex3 | dex1
+	<!-- type: none | rubber_hand | revo2 | dex3 | dex1 (both sides).
+	     left_type / right_type override one side, same as FiveAges W2.
 	     OCS2 planning: robot_common_launch injects eef_fixed_joints:=true. -->
 	<xacro:arg name="type" default="dex3"/>
+	<xacro:arg name="left_type" default=""/>
+	<xacro:arg name="right_type" default=""/>
 	<xacro:arg name="eef_fixed_joints" default="false"/>
 	<!-- Dex1 optional wrist camera mount + optical frame. -->
 	<xacro:arg name="camera" default="true"/>
@@ -26,5 +29,5 @@
 	<xacro:UnitreeG1Arm name="right" direction="-1"/>
 
 	<xacro:include filename="$(find unitree_g1_description)/xacro/eefs.xacro"/>
-	<xacro:UnitreeG1Eefs type="$(arg type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
+	<xacro:UnitreeG1Eefs type="$(arg type)" left_type="$(arg left_type)" right_type="$(arg right_type)" eef_fixed="$(arg eef_fixed_joints)" camera="$(arg camera)"/>
 </robot>

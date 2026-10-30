@@ -7,6 +7,26 @@
 	<xacro:include filename="$(find unitree_g1_description)/xacro/ros2_control/arm_ros2_control.xacro"/>
 	<xacro:include filename="$(find unitree_dex_description)/xacro/ros2_control/dex1.xacro"/>
 	<xacro:include filename="$(find unitree_dex_description)/xacro/ros2_control/dex3.xacro"/>
+	<xacro:include filename="$(find brainco_description)/xacro/ros2_control/revo2.xacro"/>
+
+	<!-- Same fallback as UnitreeG1Eefs: empty side arg uses type. -->
+	<xacro:property name="g1d_type" value="$(arg type)"/>
+	<xacro:property name="g1d_left_arg" value="$(arg left_type)"/>
+	<xacro:property name="g1d_right_arg" value="$(arg right_type)"/>
+	<xacro:property name="g1d_left_ee" value="${g1d_left_arg if g1d_left_arg != '' else g1d_type}"/>
+	<xacro:property name="g1d_right_ee" value="${g1d_right_arg if g1d_right_arg != '' else g1d_type}"/>
+
+	<xacro:macro name="UnitreeG1DEefInterfaces" params="side ee">
+		<xacro:if value="${ee == 'dex1'}">
+			<xacro:UnitreeDex1Interfaces name="${side}" eef_fixed="$(arg eef_fixed_joints)"/>
+		</xacro:if>
+		<xacro:if value="${ee == 'dex3'}">
+			<xacro:UnitreeDex3Interfaces name="${side}" eef_fixed="$(arg eef_fixed_joints)"/>
+		</xacro:if>
+		<xacro:if value="${ee == 'revo2'}">
+			<xacro:revo2_interfaces name="${side}_hand"/>
+		</xacro:if>
+	</xacro:macro>
 
 	<ros2_control name="unitree_g1d_system" type="system">
 		<hardware>
@@ -71,17 +91,11 @@
 			<state_interface name="effort"/>
 		</joint>
 
-		<!-- Arms (unitree_g1_description). Dex1 / Dex3 (unitree_dex_description). -->
+		<!-- Arms (unitree_g1_description). Per-side Dex1 / Dex3 / Revo2. -->
 		<xacro:UnitreeG1ArmInterfaces name="left"/>
 		<xacro:UnitreeG1ArmInterfaces name="right"/>
-		<xacro:if value="${'$(arg type)' == 'dex1'}">
-			<xacro:UnitreeDex1Interfaces name="left" eef_fixed="$(arg eef_fixed_joints)"/>
-			<xacro:UnitreeDex1Interfaces name="right" eef_fixed="$(arg eef_fixed_joints)"/>
-		</xacro:if>
-		<xacro:if value="${'$(arg type)' == 'dex3'}">
-			<xacro:UnitreeDex3Interfaces name="left" eef_fixed="$(arg eef_fixed_joints)"/>
-			<xacro:UnitreeDex3Interfaces name="right" eef_fixed="$(arg eef_fixed_joints)"/>
-		</xacro:if>
+		<xacro:UnitreeG1DEefInterfaces side="left" ee="${g1d_left_ee}"/>
+		<xacro:UnitreeG1DEefInterfaces side="right" ee="${g1d_right_ee}"/>
 	</ros2_control>
 
 	<xacro:if value="$(arg gazebo)">

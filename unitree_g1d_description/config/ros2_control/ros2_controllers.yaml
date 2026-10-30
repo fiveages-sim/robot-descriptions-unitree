@@ -62,7 +62,11 @@ ocs2_wbc_controller:
     mpc_frequency: 50
     info_file_name: mobile_base_tcp
     robot_name: unitree_g1d
-    fsm_default_humanoid_mode: HM_DUAL_CUSTOM_LOCK
+    # Chassis default aligned with Zerith H1 mobile_base_tcp.
+    fsm_default_humanoid_mode: HM_DUAL_RELATIVE_MOBILE_BASE
+    # Relative → /<ns>/tf (Isaac OG nodeNamespace). Absolute /tf misses dual-robot TF.
+    tf_topic: tf
+    mobile_base_tf_timeout_sec: 5.0
 
     # Pinocchio 4 DFS: [LZ_mt | LZ_it | waist_pitch | waist_yaw | left×7 | right×7]
     joints:

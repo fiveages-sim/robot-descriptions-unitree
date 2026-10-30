@@ -1,0 +1,37 @@
+# Unitree Dex3 per-side hand fragment (matches unitree_dex_description ros2_control).
+# Placeholders: {side} -> left|right, {side_} -> left_|right_
+# Joint limits / home poses are identical on both sides (geometry may still Y-mirror).
+{side}_hand_controller:
+  ros__parameters:
+    update_rate: 100
+    target_command_enabled: true
+    target_command_open_config: 0
+    target_command_close_config: 1
+    joints:
+      - {side_}hand_thumb_0_joint
+      - {side_}hand_thumb_1_joint
+      - {side_}hand_thumb_2_joint
+      - {side_}hand_middle_0_joint
+      - {side_}hand_middle_1_joint
+      - {side_}hand_index_0_joint
+      - {side_}hand_index_1_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    # open / close — same vector for left and right
+    home_1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    home_2: [0.6, 0.6, 1.0, -1.0, -1.2, -1.0, -1.2]
+    home_duration: 2.0
+    movej_duration: 2.0
+    hold_position_threshold: 0.1
+
+joint_state_extra_joints:
+  - {side_}hand_thumb_0_joint
+  - {side_}hand_thumb_1_joint
+  - {side_}hand_thumb_2_joint
+  - {side_}hand_middle_0_joint
+  - {side_}hand_middle_1_joint
+  - {side_}hand_index_0_joint
+  - {side_}hand_index_1_joint
