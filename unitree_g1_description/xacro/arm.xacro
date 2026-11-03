@@ -88,16 +88,18 @@
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
+			<!-- Mesh spans z +0.03..-0.114 and about ±0.04 radially.
+			     Axial bone plus a cross cylinder at the elbow, same split as W2 link3. -->
 			<collision>
-				<origin xyz="0 0 -0.02"/>
+				<origin xyz="0.008 ${direction*-0.004} -0.041"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.08"/>
+					<cylinder radius="0.038" length="0.146"/>
 				</geometry>
 			</collision>
 			<collision>
-				<origin xyz="0.01 ${direction*-0.01} -0.08" rpy="${PI/2.0} 0 0"/>
+				<origin xyz="0.008 ${direction*-0.004} -0.090" rpy="0 ${PI/2.0} 0"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.06"/>
+					<cylinder radius="0.037" length="0.081"/>
 				</geometry>
 			</collision>
 		</link>
@@ -125,10 +127,17 @@
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
+			<!-- Mesh spans x -0.03..0.10. Shaft along the forearm, cross cylinder at the elbow. -->
 			<collision>
-				<origin xyz="0.07 0 -0.01" rpy="0 ${PI/2.0} 0"/>
+				<origin xyz="0.035 ${direction*0.002} -0.008" rpy="0 ${PI/2.0} 0"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.06"/>
+					<cylinder radius="0.035" length="0.130"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 ${direction*0.002} -0.008" rpy="${PI/2.0} 0 0"/>
+				<geometry>
+					<cylinder radius="0.038" length="0.066"/>
 				</geometry>
 			</collision>
 		</link>

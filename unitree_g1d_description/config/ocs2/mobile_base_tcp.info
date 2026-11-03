@@ -47,7 +47,9 @@ model_information
 model_settings
 {
     usePreComputation       true
-    recompileLibraries      true
+    ; false: load /tmp/ocs2_ros2/<robot>/ocs2_wheel_humanoid/<hash> when present.
+    ; A changed URDF or this file gets a new hash and compiles once. Missing .so still compiles.
+    recompileLibraries      false
 }
 
 initialState
@@ -365,21 +367,23 @@ jointVelocityLimits
     }
 }
 
-; Same pairs as fixed_base_tcp (torso ↔ shoulder_yaw / elbow).
+; torso ↔ elbow / wrist_pitch. shoulder_yaw stays out: it sits inside the activation
+; band of the torso at a normal hang and produces a false escape velocity.
 selfCollision
 {
     activate                        true
     mu                              1e-3
     delta                           1e-4
     minimumDistance                 0.01
+    activationDistance              0.03
     collisionObjectPairs
     {
     }
     collisionLinkPairs
     {
-        [0] "torso_link, left_shoulder_yaw_link",
-        [1] "torso_link, left_elbow_link",
-        [2] "torso_link, right_shoulder_yaw_link",
-        [3] "torso_link, right_elbow_link",
+        [0] "torso_link, left_elbow_link",
+        [1] "torso_link, right_elbow_link",
+        [2] "torso_link, left_wrist_pitch_link",
+        [3] "torso_link, right_wrist_pitch_link",
     }
 }

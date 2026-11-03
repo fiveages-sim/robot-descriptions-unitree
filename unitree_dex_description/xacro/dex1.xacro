@@ -88,6 +88,16 @@
 			</xacro:unless>
 		</joint>
 
+		<!-- Grasp-center frame. Same name as other jaws (${prefix}eef).
+		     Origin is the finger-pad midplane. Z stays along base +X (jaw forward);
+		     Rx(π) after that is 180° about this Z so X/Y match the usual eef. -->
+		<link name="${prefix}eef"/>
+		<joint name="${prefix}eef_joint" type="fixed">
+			<origin xyz="0.114 0 0" rpy="${PI} ${-PI/2} 0"/>
+			<parent link="${prefix}dex1_base_link"/>
+			<child link="${prefix}eef"/>
+		</joint>
+
 		<!-- camera.glb shares base origin; optical TF from sensor-material plane (Z out, Y down). -->
 		<xacro:if value="${enable_camera}">
 			<link name="${prefix}dex1_camera_link">
