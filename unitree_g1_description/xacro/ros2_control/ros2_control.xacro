@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find unitree_g1_description)/xacro/ros2_control/arm_ros2_control.xacro"/>
+
+  <xacro:include filename="$(find unitree_dex_description)/xacro/ros2_control/dex1.xacro"/>
 
   <xacro:macro name="unitree_g1_system" params="ros2_control_hardware_type">
 
@@ -31,9 +34,40 @@
           <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
           <param name="joint_commands_topic">/isaac/joint_commands</param>
           <param name="joint_states_topic">/isaac/joint_states</param>
+          <param name="initialize_commands_from_state">true</param>
         </xacro:if>
       </hardware>
 
+      <!-- Isaac controls waist, arms and optional Dex1 grippers; legs stay external. -->
+      <xacro:if value="${ros2_control_hardware_type == 'isaac'}">
+        <xacro:UnitreeG1ArmJoint jname="waist_yaw_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="waist_roll_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="waist_pitch_joint"/>
+        <xacro:UnitreeG1ArmInterfaces name="left"/>
+        <xacro:UnitreeG1ArmInterfaces name="right"/>
+        <xacro:if value="${'$(arg type)' == 'dex1'}">
+          <xacro:UnitreeDex1Interfaces name="left" eef_fixed="$(arg eef_fixed_joints)"/>
+          <xacro:UnitreeDex1Interfaces name="right" eef_fixed="$(arg eef_fixed_joints)"/>
+        </xacro:if>
+
+        <!-- Legs: interfaces declared only so /joint_states and the TF tree carry them.
+             Locomotion owns these joints; the Isaac-side ROS_Control graph
+             (FilterArmCommands) drops every leg command, so nothing here can move them. -->
+        <xacro:UnitreeG1ArmJoint jname="left_hip_pitch_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="left_hip_roll_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="left_hip_yaw_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="left_knee_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="left_ankle_pitch_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="left_ankle_roll_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_hip_pitch_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_hip_roll_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_hip_yaw_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_knee_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_ankle_pitch_joint"/>
+        <xacro:UnitreeG1ArmJoint jname="right_ankle_roll_joint"/>
+      </xacro:if>
+
+      <xacro:unless value="${ros2_control_hardware_type == 'isaac'}">
       <!-- Left Leg Joints (6 DOF) -->
       <joint name="left_hip_pitch_joint">
         <command_interface name="position"/>
@@ -371,6 +405,14 @@
         <state_interface name="linear_acceleration.y"/>
         <state_interface name="linear_acceleration.z"/>
       </sensor>
+
+      <!-- Dex1 gripper interfaces; without these the composed left/right_gripper_controller
+           and joint_state_broadcaster cannot activate for hardware other than isaac. -->
+      <xacro:if value="${'$(arg type)' == 'dex1'}">
+        <xacro:UnitreeDex1Interfaces name="left" eef_fixed="$(arg eef_fixed_joints)"/>
+        <xacro:UnitreeDex1Interfaces name="right" eef_fixed="$(arg eef_fixed_joints)"/>
+      </xacro:if>
+      </xacro:unless>
 
     </ros2_control>
 

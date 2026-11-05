@@ -82,3 +82,9 @@ ros2 launch robot_common_launch manipulator_ocs2.launch.py robot_name:=unitree_g
   source ~/ros2_ws/install/setup.bash
   ros2 launch ocs2_arm_controller demo.launch.py robot:=unitree_g1 type:=revo2 hardware:=unitree_real
   ```
+* Isaac Sim (Topic Bridge)
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch ocs2_arm_controller demo.launch.py robot:=unitree_g1 type:=dex1 hardware:=isaac
+  ```
+  `hardware:=isaac` 会自动合并 `config/ros2_control/isaac.yaml`，并使用 `/isaac/joint_states` + `/isaac/joint_commands` 桥接。
