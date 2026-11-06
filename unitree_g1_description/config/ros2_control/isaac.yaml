@@ -3,12 +3,10 @@ ocs2_arm_controller:
   ros__parameters:
     command_interfaces: [position]
     state_interfaces: [position, velocity, effort]
-    # Isaac plans waist yaw/roll + both arms (16 joints); waist pitch stays fixed.
+    # Isaac plans both arms only (14 joints); all waist joints are fixed in OCS2.
     # The base task.info keeps the entire waist fixed.
     info_file_name: isaac_waist
     joints:
-      - waist_yaw_joint
-      - waist_roll_joint
       - left_shoulder_pitch_joint
       - left_shoulder_roll_joint
       - left_shoulder_yaw_joint
@@ -23,13 +21,11 @@ ocs2_arm_controller:
       - right_wrist_roll_joint
       - right_wrist_pitch_joint
       - right_wrist_yaw_joint
-    # Joint order must match `joints` above: waist, then left arm, then right arm.
+    # Joint order must match `joints` above: left arm, then right arm.
     home_pos: [
-      0.0, 0.0,
       0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
       0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]
     rest_pos: [
-      0.0, 0.0,
       0.0, 0.2, 0.0, 1.57, 0.0, 0.0, 0.0,
       0.0, -0.2, 0.0, 1.57, 0.0, 0.0, 0.0 ]
 

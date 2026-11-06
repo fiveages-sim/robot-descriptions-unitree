@@ -20,10 +20,12 @@ model_information {
     [10] "right_ankle_pitch_joint"
     [11] "right_ankle_roll_joint"
 
-    ; Plan waist yaw/roll and both arms; keep waist pitch fixed at zero.
-    ; Remaining DOFs: waist (0-1), left arm (2-8), right arm (9-15).
+    ; Fix all waist joints; plan both arms only.
+    ; Remaining DOFs: left arm (0-6), right arm (7-13).
     ; Order must match `joints` in ros2_control/isaac.yaml.
-    [12] "waist_pitch_joint"
+    [12] "waist_yaw_joint"
+    [13] "waist_roll_joint"
+    [14] "waist_pitch_joint"
   }
 
   ; base frame of the robot (from URDF)
@@ -121,27 +123,24 @@ initialState
   ; initial state for the arm DOFs
   arm
   {
-    ; Waist joints (2 joints)
-    (0,0)   0.0      ; waist_yaw_joint
-    (1,0)   0.0      ; waist_roll_joint
     
     ; Left arm joints (7 joints)
-    (2,0)   0.0      ; left_shoulder_pitch_joint
-    (3,0)   0.0      ; left_shoulder_roll_joint
-    (4,0)   0.0      ; left_shoulder_yaw_joint
-    (5,0)   0.0      ; left_elbow_joint
-    (6,0)   0.0      ; left_wrist_roll_joint
-    (7,0)   0.0      ; left_wrist_pitch_joint
-    (8,0)   0.0      ; left_wrist_yaw_joint
+    (0,0)   0.0      ; left_shoulder_pitch_joint
+    (1,0)   0.0      ; left_shoulder_roll_joint
+    (2,0)   0.0      ; left_shoulder_yaw_joint
+    (3,0)   0.0      ; left_elbow_joint
+    (4,0)   0.0      ; left_wrist_roll_joint
+    (5,0)   0.0      ; left_wrist_pitch_joint
+    (6,0)   0.0      ; left_wrist_yaw_joint
     
     ; Right arm joints (7 joints)
-    (9,0)  0.0      ; right_shoulder_pitch_joint
-    (10,0)  0.0      ; right_shoulder_roll_joint
-    (11,0)  0.0      ; right_shoulder_yaw_joint
-    (12,0)  0.0      ; right_elbow_joint
-    (13,0)  0.0      ; right_wrist_roll_joint
-    (14,0)  0.0      ; right_wrist_pitch_joint
-    (15,0)  0.0      ; right_wrist_yaw_joint
+    (7,0)  0.0      ; right_shoulder_pitch_joint
+    (8,0)  0.0      ; right_shoulder_roll_joint
+    (9,0)  0.0      ; right_shoulder_yaw_joint
+    (10,0)  0.0      ; right_elbow_joint
+    (11,0)  0.0      ; right_wrist_roll_joint
+    (12,0)  0.0      ; right_wrist_pitch_joint
+    (13,0)  0.0      ; right_wrist_yaw_joint
   }
 }
 
@@ -184,28 +183,24 @@ inputCost
     arm
     {
       scaling 1e-3
-
-      ; Waist joints (2 joints)
-      (0,0)   0.06      ; waist_yaw_joint
-      (1,1)   0.06      ; waist_roll_joint
       
       ; Left arm joints (7 joints)
-      (2,2)   0.06      ; left_shoulder_pitch_joint
-      (3,3)   0.06      ; left_shoulder_roll_joint
-      (4,4)   0.06      ; left_shoulder_yaw_joint
-      (5,5)   0.06      ; left_elbow_joint
-      (6,6)   0.06      ; left_wrist_roll_joint
-      (7,7)   0.06      ; left_wrist_pitch_joint
-      (8,8)   0.06      ; left_wrist_yaw_joint
+      (0,0)   0.06      ; left_shoulder_pitch_joint
+      (1,1)   0.06      ; left_shoulder_roll_joint
+      (2,2)   0.06      ; left_shoulder_yaw_joint
+      (3,3)   0.06      ; left_elbow_joint
+      (4,4)   0.06      ; left_wrist_roll_joint
+      (5,5)   0.06      ; left_wrist_pitch_joint
+      (6,6)   0.06      ; left_wrist_yaw_joint
       
       ; Right arm joints (7 joints)
-      (9,9) 0.06      ; right_shoulder_pitch_joint
-      (10,10) 0.06      ; right_shoulder_roll_joint
-      (11,11) 0.06      ; right_shoulder_yaw_joint
-      (12,12) 0.06      ; right_elbow_joint
-      (13,13) 0.06      ; right_wrist_roll_joint
-      (14,14) 0.06      ; right_wrist_pitch_joint
-      (15,15) 0.06      ; right_wrist_yaw_joint
+      (7,7) 0.06      ; right_shoulder_pitch_joint
+      (8,8) 0.06      ; right_shoulder_roll_joint
+      (9,9) 0.06      ; right_shoulder_yaw_joint
+      (10,10) 0.06      ; right_elbow_joint
+      (11,11) 0.06      ; right_wrist_roll_joint
+      (12,12) 0.06      ; right_wrist_pitch_joint
+      (13,13) 0.06      ; right_wrist_yaw_joint
     }
   }
 }
@@ -336,27 +331,24 @@ jointVelocityLimits
     ; velocity limits for the arm DOFs
     arm
     {
-      ; Waist joints (2 joints)
-      (0,0)  -0.9         ; waist_yaw_joint [rad/s]
-      (1,0)  -0.9         ; waist_roll_joint [rad/s]
       
       ; Left arm joints (7 joints)
-      (2,0)  -1.57        ; left_shoulder_pitch_joint [rad/s]
-      (3,0)  -1.57        ; left_shoulder_roll_joint [rad/s]
-      (4,0)  -1.57        ; left_shoulder_yaw_joint [rad/s]
-      (5,0)  -1.57        ; left_elbow_joint [rad/s]
-      (6,0)  -1.57        ; left_wrist_roll_joint [rad/s]
-      (7,0)  -1.57        ; left_wrist_pitch_joint [rad/s]
-      (8,0)  -1.57        ; left_wrist_yaw_joint [rad/s]
+      (0,0)  -1.57        ; left_shoulder_pitch_joint [rad/s]
+      (1,0)  -1.57        ; left_shoulder_roll_joint [rad/s]
+      (2,0)  -1.57        ; left_shoulder_yaw_joint [rad/s]
+      (3,0)  -1.57        ; left_elbow_joint [rad/s]
+      (4,0)  -1.57        ; left_wrist_roll_joint [rad/s]
+      (5,0)  -1.57        ; left_wrist_pitch_joint [rad/s]
+      (6,0)  -1.57        ; left_wrist_yaw_joint [rad/s]
       
       ; Right arm joints (7 joints)
-      (9,0) -1.57        ; right_shoulder_pitch_joint [rad/s]
-      (10,0) -1.57        ; right_shoulder_roll_joint [rad/s]
-      (11,0) -1.57        ; right_shoulder_yaw_joint [rad/s]
-      (12,0) -1.57        ; right_elbow_joint [rad/s]
-      (13,0) -1.57        ; right_wrist_roll_joint [rad/s]
-      (14,0) -1.57        ; right_wrist_pitch_joint [rad/s]
-      (15,0) -1.57        ; right_wrist_yaw_joint [rad/s]
+      (7,0) -1.57        ; right_shoulder_pitch_joint [rad/s]
+      (8,0) -1.57        ; right_shoulder_roll_joint [rad/s]
+      (9,0) -1.57        ; right_shoulder_yaw_joint [rad/s]
+      (10,0) -1.57        ; right_elbow_joint [rad/s]
+      (11,0) -1.57        ; right_wrist_roll_joint [rad/s]
+      (12,0) -1.57        ; right_wrist_pitch_joint [rad/s]
+      (13,0) -1.57        ; right_wrist_yaw_joint [rad/s]
     }
   }
 
@@ -393,27 +385,24 @@ jointVelocityLimits
     ; velocity limits for the arm DOFs
     arm
     {
-      ; Waist joints (2 joints)
-      (0,0)  0.9          ; waist_yaw_joint [rad/s]
-      (1,0)  0.9          ; waist_roll_joint [rad/s]
       
       ; Left arm joints (7 joints)
-      (2,0)  1.57         ; left_shoulder_pitch_joint [rad/s]
-      (3,0)  1.57         ; left_shoulder_roll_joint [rad/s]
-      (4,0)  1.57         ; left_shoulder_yaw_joint [rad/s]
-      (5,0)  1.57         ; left_elbow_joint [rad/s]
-      (6,0)  1.57         ; left_wrist_roll_joint [rad/s]
-      (7,0)  1.57         ; left_wrist_pitch_joint [rad/s]
-      (8,0)  1.57         ; left_wrist_yaw_joint [rad/s]
+      (0,0)  1.57         ; left_shoulder_pitch_joint [rad/s]
+      (1,0)  1.57         ; left_shoulder_roll_joint [rad/s]
+      (2,0)  1.57         ; left_shoulder_yaw_joint [rad/s]
+      (3,0)  1.57         ; left_elbow_joint [rad/s]
+      (4,0)  1.57         ; left_wrist_roll_joint [rad/s]
+      (5,0)  1.57         ; left_wrist_pitch_joint [rad/s]
+      (6,0)  1.57         ; left_wrist_yaw_joint [rad/s]
       
       ; Right arm joints (7 joints)
-      (9,0) 1.57         ; right_shoulder_pitch_joint [rad/s]
-      (10,0) 1.57         ; right_shoulder_roll_joint [rad/s]
-      (11,0) 1.57         ; right_shoulder_yaw_joint [rad/s]
-      (12,0) 1.57         ; right_elbow_joint [rad/s]
-      (13,0) 1.57         ; right_wrist_roll_joint [rad/s]
-      (14,0) 1.57         ; right_wrist_pitch_joint [rad/s]
-      (15,0) 1.57         ; right_wrist_yaw_joint [rad/s]
+      (7,0) 1.57         ; right_shoulder_pitch_joint [rad/s]
+      (8,0) 1.57         ; right_shoulder_roll_joint [rad/s]
+      (9,0) 1.57         ; right_shoulder_yaw_joint [rad/s]
+      (10,0) 1.57         ; right_elbow_joint [rad/s]
+      (11,0) 1.57         ; right_wrist_roll_joint [rad/s]
+      (12,0) 1.57         ; right_wrist_pitch_joint [rad/s]
+      (13,0) 1.57         ; right_wrist_yaw_joint [rad/s]
     }
   }
 }
