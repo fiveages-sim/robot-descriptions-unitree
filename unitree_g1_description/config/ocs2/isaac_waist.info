@@ -1,6 +1,6 @@
 ; robot model meta-information
 model_information {
-  manipulatorModelType     0      // 0: Default-arm, 1: Wheel-based manipulator, 2: Floating-arm manipulator, 3: Fully actuated floating-arm manipulator
+  manipulatorModelType     0      ; Fixed-base dual-arm manipulator
   
   ; motion joints in the URDF to consider fixed
   removeJoints {
@@ -96,7 +96,7 @@ rollout
 ; MPC settings
 mpc
 {
-  timeHorizon                     1.0   ; [s]
+  timeHorizon                     0.4   ; [s]
   solutionTimeWindow              0.2   ; [s]
   coldStart                       false
   
@@ -109,17 +109,6 @@ mpc
 ; initial state
 initialState
 {
-  ; initial state for the different types of arm base DOFs
-  base
-  {
-    wheelBasedMobileManipulator
-    {
-      (0,0)  0.0  ; position x
-      (1,0)  0.0  ; position y
-      (2,0)  0.0  ; heading
-    }
-  }
-
   ; initial state for the arm DOFs
   arm
   {
@@ -149,58 +138,28 @@ inputCost
   ; control weight matrix
   R
   {
-    ; input costs for the different types of arm base DOFs
-    base
-    {
-      defaultManipulator
-      {
-      }
-
-      floatingArmManipulator
-      {
-      }
-
-      fullyActuatedFloatingArmManipulator
-      {
-        scaling 1e-2
-        (0,0)  5.0  ; position x
-        (1,1)  5.0  ; position y
-        (2,2)  5.0  ; position z
-        (3,3)  5.0  ; euler angle z
-        (4,4)  5.0  ; euler angle y
-        (5,5)  5.0  ; euler angle x
-      }
-
-      wheelBasedMobileManipulator
-      {
-        scaling 1e-2
-        (0,0)  1.5  ; forward velocity
-        (1,1)  1.5  ; turning velocity
-      }
-    }
-    
     ; input costs for the arm DOFs
     arm
     {
       scaling 1e-3
       
       ; Left arm joints (7 joints)
-      (0,0)   0.06      ; left_shoulder_pitch_joint
-      (1,1)   0.06      ; left_shoulder_roll_joint
-      (2,2)   0.06      ; left_shoulder_yaw_joint
-      (3,3)   0.06      ; left_elbow_joint
-      (4,4)   0.06      ; left_wrist_roll_joint
-      (5,5)   0.06      ; left_wrist_pitch_joint
-      (6,6)   0.06      ; left_wrist_yaw_joint
+      (0,0)   0.5      ; left_shoulder_pitch_joint
+      (1,1)   0.5      ; left_shoulder_roll_joint
+      (2,2)   0.5      ; left_shoulder_yaw_joint
+      (3,3)   0.5      ; left_elbow_joint
+      (4,4)   0.1      ; left_wrist_roll_joint
+      (5,5)   0.1      ; left_wrist_pitch_joint
+      (6,6)   0.1      ; left_wrist_yaw_joint
       
       ; Right arm joints (7 joints)
-      (7,7) 0.06      ; right_shoulder_pitch_joint
-      (8,8) 0.06      ; right_shoulder_roll_joint
-      (9,9) 0.06      ; right_shoulder_yaw_joint
-      (10,10) 0.06      ; right_elbow_joint
-      (11,11) 0.06      ; right_wrist_roll_joint
-      (12,12) 0.06      ; right_wrist_pitch_joint
-      (13,13) 0.06      ; right_wrist_yaw_joint
+      (7,7) 0.5      ; right_shoulder_pitch_joint
+      (8,8) 0.5      ; right_shoulder_roll_joint
+      (9,9) 0.5      ; right_shoulder_yaw_joint
+      (10,10) 0.5      ; right_elbow_joint
+      (11,11) 0.1      ; right_wrist_roll_joint
+      (12,12) 0.1      ; right_wrist_pitch_joint
+      (13,13) 0.1      ; right_wrist_yaw_joint
     }
   }
 }
@@ -228,15 +187,15 @@ finalEndEffector
   dualArmMode      true
   leftArm
     {
-      muPosition      10.0
-      muOrientation    5.0
+      muPosition      20.0
+      muOrientation    10.0
     }
 
     ; 右臂特定配置
   rightArm
     {
-      muPosition      10.0
-      muOrientation    5.0
+      muPosition      20.0
+      muOrientation    10.0
     }
 }
 
@@ -274,7 +233,7 @@ selfCollision
   mu      1e-3
 
   ; relaxed log barrier delta
-  delta   1e-4
+  delta   1e-2
 }
 
 ; Only applied for arm joints: limits parsed from URDF
@@ -284,10 +243,10 @@ jointPositionLimits
   activate  true
 
   ; relaxed log barrier mu
-  mu      0.1
+  mu      1e-3
 
   ; relaxed log barrier delta
-  delta   1e-2
+  delta   1e-3
 }
 
 jointVelocityLimits
@@ -300,109 +259,53 @@ jointVelocityLimits
 
   lowerBound
   {
-    ; velocity limits for the different types of arm base DOFs
-    base
-    {
-      defaultManipulator
-      {
-      }
-
-      floatingArmManipulator
-      {
-      }
-
-      fullyActuatedFloatingArmManipulator
-      {
-        (0,0)  -0.1  ; linear velocity x
-        (1,0)  -0.1  ; linear velocity y
-        (2,0)  -0.1  ; linear velocity z
-        (3,0)  -0.3  ; euler angle velocity z
-        (4,0)  -0.3  ; euler angle velocity y
-        (5,0)  -0.3  ; euler angle velocity x
-      }
-
-      wheelBasedMobileManipulator
-      {
-        (0,0)  -2.0 ; forward velocity
-        (1,0)  -2.0 ; turning velocity
-      }
-    }
-
     ; velocity limits for the arm DOFs
     arm
     {
       
       ; Left arm joints (7 joints)
-      (0,0)  -1.57        ; left_shoulder_pitch_joint [rad/s]
-      (1,0)  -1.57        ; left_shoulder_roll_joint [rad/s]
-      (2,0)  -1.57        ; left_shoulder_yaw_joint [rad/s]
-      (3,0)  -1.57        ; left_elbow_joint [rad/s]
-      (4,0)  -1.57        ; left_wrist_roll_joint [rad/s]
-      (5,0)  -1.57        ; left_wrist_pitch_joint [rad/s]
-      (6,0)  -1.57        ; left_wrist_yaw_joint [rad/s]
+      (0,0)  -2.07        ; left_shoulder_pitch_joint [rad/s]
+      (1,0)  -2.07        ; left_shoulder_roll_joint [rad/s]
+      (2,0)  -2.07        ; left_shoulder_yaw_joint [rad/s]
+      (3,0)  -2.07        ; left_elbow_joint [rad/s]
+      (4,0)  -2.57        ; left_wrist_roll_joint [rad/s]
+      (5,0)  -2.57        ; left_wrist_pitch_joint [rad/s]
+      (6,0)  -2.57        ; left_wrist_yaw_joint [rad/s]
       
       ; Right arm joints (7 joints)
-      (7,0) -1.57        ; right_shoulder_pitch_joint [rad/s]
-      (8,0) -1.57        ; right_shoulder_roll_joint [rad/s]
-      (9,0) -1.57        ; right_shoulder_yaw_joint [rad/s]
-      (10,0) -1.57        ; right_elbow_joint [rad/s]
-      (11,0) -1.57        ; right_wrist_roll_joint [rad/s]
-      (12,0) -1.57        ; right_wrist_pitch_joint [rad/s]
-      (13,0) -1.57        ; right_wrist_yaw_joint [rad/s]
+      (7,0) -2.07        ; right_shoulder_pitch_joint [rad/s]
+      (8,0) -2.07        ; right_shoulder_roll_joint [rad/s]
+      (9,0) -2.07        ; right_shoulder_yaw_joint [rad/s]
+      (10,0) -2.07        ; right_elbow_joint [rad/s]
+      (11,0) -2.57        ; right_wrist_roll_joint [rad/s]
+      (12,0) -2.57        ; right_wrist_pitch_joint [rad/s]
+      (13,0) -2.57        ; right_wrist_yaw_joint [rad/s]
     }
   }
 
   upperBound
   {
-    ; velocity limits for the different types of arm base DOFs
-    base
-    {
-      defaultManipulator
-      {
-      }
-
-      floatingArmManipulator
-      {
-      }
-
-      fullyActuatedFloatingArmManipulator
-      {
-        (0,0)  0.1  ; linear velocity x
-        (1,0)  0.1  ; linear velocity y
-        (2,0)  0.1  ; linear velocity z
-        (3,0)  0.3  ; euler angle velocity z
-        (4,0)  0.3  ; euler angle velocity y
-        (5,0)  0.3  ; euler angle velocity x
-      }
-
-      wheelBasedMobileManipulator
-      {
-        (0,0)  2.0 ; forward velocity
-        (1,0)  2.0 ; turning velocity
-      }
-    }
-
     ; velocity limits for the arm DOFs
     arm
     {
       
       ; Left arm joints (7 joints)
-      (0,0)  1.57         ; left_shoulder_pitch_joint [rad/s]
-      (1,0)  1.57         ; left_shoulder_roll_joint [rad/s]
-      (2,0)  1.57         ; left_shoulder_yaw_joint [rad/s]
-      (3,0)  1.57         ; left_elbow_joint [rad/s]
-      (4,0)  1.57         ; left_wrist_roll_joint [rad/s]
-      (5,0)  1.57         ; left_wrist_pitch_joint [rad/s]
-      (6,0)  1.57         ; left_wrist_yaw_joint [rad/s]
+      (0,0)  2.07         ; left_shoulder_pitch_joint [rad/s]
+      (1,0)  2.07         ; left_shoulder_roll_joint [rad/s]
+      (2,0)  2.07         ; left_shoulder_yaw_joint [rad/s]
+      (3,0)  2.07         ; left_elbow_joint [rad/s]
+      (4,0)  2.57         ; left_wrist_roll_joint [rad/s]
+      (5,0)  2.57         ; left_wrist_pitch_joint [rad/s]
+      (6,0)  2.57         ; left_wrist_yaw_joint [rad/s]
       
       ; Right arm joints (7 joints)
-      (7,0) 1.57         ; right_shoulder_pitch_joint [rad/s]
-      (8,0) 1.57         ; right_shoulder_roll_joint [rad/s]
-      (9,0) 1.57         ; right_shoulder_yaw_joint [rad/s]
-      (10,0) 1.57         ; right_elbow_joint [rad/s]
-      (11,0) 1.57         ; right_wrist_roll_joint [rad/s]
-      (12,0) 1.57         ; right_wrist_pitch_joint [rad/s]
-      (13,0) 1.57         ; right_wrist_yaw_joint [rad/s]
+      (7,0) 2.07         ; right_shoulder_pitch_joint [rad/s]
+      (8,0) 2.07         ; right_shoulder_roll_joint [rad/s]
+      (9,0) 2.07         ; right_shoulder_yaw_joint [rad/s]
+      (10,0) 2.07         ; right_elbow_joint [rad/s]
+      (11,0) 2.57         ; right_wrist_roll_joint [rad/s]
+      (12,0) 2.57         ; right_wrist_pitch_joint [rad/s]
+      (13,0) 2.57         ; right_wrist_yaw_joint [rad/s]
     }
   }
 }
