@@ -48,13 +48,13 @@ ocs2_arm_controller:
     robot_name: unitree_g1
 
     # Control parameters
-    # home_pos: [left_shoulder_pitch, left_shoulder_roll, left_shoulder_yaw, left_elbow, left_wrist_roll, left_wrist_pitch, left_wrist_yaw,
+    # home_1: [left_shoulder_pitch, left_shoulder_roll, left_shoulder_yaw, left_elbow, left_wrist_roll, left_wrist_pitch, left_wrist_yaw,
     #            right_shoulder_pitch, right_shoulder_roll, right_shoulder_yaw, right_elbow, right_wrist_roll, right_wrist_pitch, right_wrist_yaw]
-    home_pos: [
+    home_1: [
       0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
       0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]
-    # rest_pos: [left_shoulder_pitch, left_shoulder_roll, left_shoulder_yaw, left_elbow, left_wrist_roll, left_wrist_pitch, left_wrist_yaw,
+    # home_2: [left_shoulder_pitch, left_shoulder_roll, left_shoulder_yaw, left_elbow, left_wrist_roll, left_wrist_pitch, left_wrist_yaw,
     #            right_shoulder_pitch, right_shoulder_roll, right_shoulder_yaw, right_elbow, right_wrist_roll, right_wrist_pitch, right_wrist_yaw]
-    rest_pos: [
+    home_2: [
       0.0, 0.2, 0.0, 1.57, 0.0, 0.0, 0.0,
       0.0, -0.2, 0.0, 1.57, 0.0, 0.0, 0.0 ]
