@@ -14,3 +14,30 @@
 
     head_link_name: "head_link"
     reference_link: "head_link"
+
+    ########### 全身 vr 遥操作配置 ###########
+    # 身长/肩宽/臂长 缩放系数
+    body_length_scale: 0.8
+    shoulder_width_scale: 0.9
+    arm_length_scale: 0.8
+
+    # 人体系 → 机体系的固定平移偏置 [x, y, z]（米，H 系：x 前 / y 左 / z 上）。
+    # 机器人 footprint 落在头部后下方（底盘后悬）时，每个关键点都要相对人体前移，
+    # 把前移量填进 x（正值 = 前进）。默认全 0 = 不做补偿。
+    human_to_robot_offset_xyz: [0.1, 0.0, 0.0]
+
+    # 「手部坐标系 → tcp 坐标系」固定轴 RPY 偏置（度，R = Rz·Ry·Rx），
+    # 在节点内右乘使用：R_tcp = R_手 · R_偏置，即偏置的三列依次是
+    # tcp 的 x / y / z 轴在手部坐标系里的方向。
+    # 数据源（手柄面朝上）：
+    #   左手 x 上、y 前、z 左   右手 x 上、y 后、z 右
+    # 目标 tcp（零位与躯干同向）：x 前、y 左、z 上
+    # 左手：先绕手部 x 滚 +90°（上/前/左 → 上/左/后），再绕手部 z 偏航 +90° → 前/左/上
+    # 右手：先绕手部 x 滚 -90°（上/后/右 → 上/左/后），再绕手部 z 偏航 -90° → 前/左/上
+    # 注意：本偏置与 body_ee_source（wrist / hand）绑定，切换数据源须重新推导。
+    hand_to_ee_rpy_deg_left: [90.0, 0.0, 90.0]
+    hand_to_ee_rpy_deg_right: [-90.0, 0.0, -90.0]
+
+    # 胸/头数据源 → 目标坐标系偏置：当前与目标同向，取单位旋转（即改用基底值）
+    # body_src_to_ee_rpy_deg: [0.0, 0.0, 0.0]
+    # head_src_to_ee_rpy_deg: [0.0, 0.0, 0.0]
