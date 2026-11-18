@@ -85,6 +85,15 @@ ocs2_arm_controller:
     # Control parameters
     # home_pos: [left_shoulder_pitch, left_shoulder_roll, left_shoulder_yaw, left_elbow, left_wrist_roll, left_wrist_pitch, left_wrist_yaw,
     #            right_shoulder_pitch, right_shoulder_roll, right_shoulder_yaw, right_elbow, right_wrist_roll, right_wrist_pitch, right_wrist_yaw]
+    # home_1 … home_N: HOME presets AND the OCS2 "HOME joint reference"
+    # (arms_controller_common HomeJointReferenceManager). The controller no longer
+    # falls back to home_pos, so home_1 is REQUIRED.
+    # Joint order = `joints` above: left arm 7, then right arm 7.
+    home_1: [
+      0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
+      0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]
+
+    # Legacy alias, kept so older controller builds still load this file.
     home_pos: [
       0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
       0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]

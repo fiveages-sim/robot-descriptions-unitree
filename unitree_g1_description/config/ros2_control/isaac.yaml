@@ -22,6 +22,10 @@ ocs2_arm_controller:
       - right_wrist_pitch_joint
       - right_wrist_yaw_joint
     # Joint order must match `joints` above: left arm, then right arm.
+    # home_1 is REQUIRED: HOME state + OCS2 HOME joint reference both read it.
+    home_1: [
+      0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
+      0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]
     home_pos: [
       0.0, 0.2, 0.0, 0.0, -0.2, 0.0, 0.0,
       0.0, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0 ]
