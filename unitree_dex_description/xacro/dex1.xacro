@@ -88,6 +88,27 @@
 			</xacro:unless>
 		</joint>
 
+		<!-- Grasp-center frame. Same name as other jaws (${prefix}eef).
+		     Origin is the finger-pad midplane. Z stays along base +X (jaw forward);
+		     Rx(π) after that is 180° about this Z so X/Y match the usual eef.
+
+		     【2026-11-19 从 main 恢复】
+		     feature/g1-isaac-control 分支上这个 link 被删掉了，后果不是"少一个
+		     frame"这么简单：
+		       - G1D 的 robot.yaml 写 ee_target_frame: "{arm}_eef"，技能在发目标
+		         前要用 TF 把夹指位姿换算成运控跟踪的 {arm}_tcp。
+		       - 缺了 _eef → motion-generation 第一步 pick 直接失败：
+		             Failed to lookup transform from 'right_tcp' to 'right_eef'
+		       - 更隐蔽的是：若绕过它、改用 tcp 语义，抓取点会沿工具轴差
+		         0.114m（指腹中点相对 base），夹爪会插进试管/架子。
+		     所以这里按 main 的定义原样恢复，G1 与 G1D 共用。 -->
+		<link name="${prefix}eef"/>
+		<joint name="${prefix}eef_joint" type="fixed">
+			<origin xyz="0.114 0 0" rpy="${PI} ${-PI/2} 0"/>
+			<parent link="${prefix}dex1_base_link"/>
+			<child link="${prefix}eef"/>
+		</joint>
+
 		<!-- camera.glb shares base origin; optical TF from sensor-material plane (Z out, Y down). -->
 		<xacro:if value="${enable_camera}">
 			<link name="${prefix}dex1_camera_link">

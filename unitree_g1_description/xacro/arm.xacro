@@ -88,16 +88,27 @@
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
+			<!-- Mesh spans z +0.03..-0.114 and about ±0.04 radially.
+			     Axial bone plus a cross cylinder at the elbow, same split as W2 link3.
+
+			     【2026-11-19 从 main 恢复】
+			     feature/g1-isaac-control 把这两个圆柱缩小成 r=0.03 / l=0.08 与
+			     r=0.03 / l=0.06。collision 只影响 OCS2 的自碰撞距离模型，不影响
+			     运动学，但缩小后模型比实际更"瘦"：
+			       - OCS2 以为大臂离躯干比真实更远 → 该触发时没触发
+			       - 真实接触（PhysX 用 mesh）先发生在 OCS2 没预料到的位置
+			       - 于是接触发生时 MPC 仍在推，形成力尖峰 → 抖动 / 弹飞
+			     恢复成 main 的几何，让 OCS2 的碰撞模型与 PhysX 的 mesh 接触一致。 -->
 			<collision>
-				<origin xyz="0 0 -0.02"/>
+				<origin xyz="0.008 ${direction*-0.004} -0.041"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.08"/>
+					<cylinder radius="0.038" length="0.146"/>
 				</geometry>
 			</collision>
 			<collision>
-				<origin xyz="0.01 ${direction*-0.01} -0.08" rpy="${PI/2.0} 0 0"/>
+				<origin xyz="0.008 ${direction*-0.004} -0.090" rpy="0 ${PI/2.0} 0"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.06"/>
+					<cylinder radius="0.037" length="0.081"/>
 				</geometry>
 			</collision>
 		</link>
@@ -125,10 +136,19 @@
 								scale="1 ${direction} 1"/>
 				</geometry>
 			</visual>
+			<!-- Mesh spans x -0.03..0.10. Shaft along the forearm, cross cylinder at the elbow.
+			     同上：从 main 恢复。前臂这一段被合并成一个短圆柱后，肘部外侧
+			     与架子/躯干的碰撞完全不在模型里。 -->
 			<collision>
-				<origin xyz="0.07 0 -0.01" rpy="0 ${PI/2.0} 0"/>
+				<origin xyz="0.035 ${direction*0.002} -0.008" rpy="0 ${PI/2.0} 0"/>
 				<geometry>
-					<cylinder radius="0.03" length="0.06"/>
+					<cylinder radius="0.035" length="0.130"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 ${direction*0.002} -0.008" rpy="${PI/2.0} 0 0"/>
+				<geometry>
+					<cylinder radius="0.038" length="0.066"/>
 				</geometry>
 			</collision>
 		</link>

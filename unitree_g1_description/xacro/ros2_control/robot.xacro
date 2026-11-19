@@ -8,6 +8,9 @@
   <xacro:unitree_g1_system ros2_control_hardware_type="$(arg ros2_control_hardware_type)"/>
 
   <xacro:arg name="gazebo" default="false" />
+  <!-- ArticulationRoot prim for isaacsim_ros2_control/IsaacSimSystem
+       (hardware:=isaac_sim). emit_control always passes the live OGN targetPrim. -->
+  <xacro:arg name="isaac_prim_path" default="" />
   <xacro:if value="$(arg gazebo)">
     <gazebo>
       <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">

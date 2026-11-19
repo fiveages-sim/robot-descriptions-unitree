@@ -36,6 +36,12 @@
           <param name="joint_states_topic">/isaac/joint_states</param>
           <param name="initialize_commands_from_state">true</param>
         </xacro:if>
+        <!-- In-process controller_manager (FaSim ROS=fiveages). prim_path is the
+             articulation root; emit_control rewrites it to the OGN targetPrim. -->
+        <xacro:if value="${ros2_control_hardware_type == 'isaac_sim'}">
+          <plugin>isaacsim_ros2_control/IsaacSimSystem</plugin>
+          <param name="prim_path">$(arg isaac_prim_path)</param>
+        </xacro:if>
       </hardware>
 
       <!-- Isaac controls waist, arms and optional Dex1 grippers; legs stay external. -->
@@ -67,7 +73,27 @@
         <xacro:UnitreeG1ArmJoint jname="right_ankle_roll_joint"/>
       </xacro:if>
 
-      <xacro:unless value="${ros2_control_hardware_type == 'isaac'}">
+      <!-- In-process IsaacSimSystem: same waist/arm ownership as `isaac`, but the
+           legs are declared **state only**. IsaacSimSystem writes every declared
+           command interface each cycle, so a leg position command here would race
+           the standing policy (legs) for the same DOFs. State-only still puts them
+           in /joint_states and the TF tree. -->
+      <xacro:if value="${ros2_control_hardware_type == 'isaac_sim'}">
+        <xacro:UnitreeG1JointState jname="waist_yaw_joint"/>
+        <xacro:UnitreeG1JointState jname="waist_roll_joint"/>
+        <xacro:UnitreeG1JointState jname="waist_pitch_joint"/>
+        <xacro:UnitreeG1ArmInterfaces name="left"/>
+        <xacro:UnitreeG1ArmInterfaces name="right"/>
+        <xacro:if value="${'$(arg type)' == 'dex1'}">
+          <xacro:UnitreeDex1Interfaces name="left" eef_fixed="$(arg eef_fixed_joints)"/>
+          <xacro:UnitreeDex1Interfaces name="right" eef_fixed="$(arg eef_fixed_joints)"/>
+        </xacro:if>
+
+        <xacro:UnitreeG1LegStateInterfaces name="left"/>
+        <xacro:UnitreeG1LegStateInterfaces name="right"/>
+      </xacro:if>
+
+      <xacro:unless value="${ros2_control_hardware_type == 'isaac' or ros2_control_hardware_type == 'isaac_sim'}">
       <!-- Left Leg Joints (6 DOF) -->
       <joint name="left_hip_pitch_joint">
         <command_interface name="position"/>

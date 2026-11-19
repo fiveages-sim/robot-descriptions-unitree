@@ -14,6 +14,35 @@
 		</joint>
 	</xacro:macro>
 
+	<!--
+	State-only joint: no command_interface at all.
+
+	Used for the legs under hardware:=isaac_sim (in-process IsaacSimSystem). That
+	hardware writes **every** declared command interface on each cycle with
+	whatever its counterpart currently holds, so declaring a position command for
+	a leg would make ros2_control and the standing policy both drive it. Declaring
+	state only keeps the leg in /joint_states and the TF tree (which is why the
+	joint must be listed at all) while leaving the drive to whoever owns it.
+	-->
+	<xacro:macro name="UnitreeG1JointState" params="jname">
+		<joint name="${jname}">
+			<state_interface name="position"/>
+			<state_interface name="velocity"/>
+			<state_interface name="effort"/>
+		</joint>
+	</xacro:macro>
+
+	<xacro:macro name="UnitreeG1LegStateInterfaces" params="name">
+		<xacro:property name="prefix" value="${name}_"/>
+
+		<xacro:UnitreeG1JointState jname="${prefix}hip_pitch_joint"/>
+		<xacro:UnitreeG1JointState jname="${prefix}hip_roll_joint"/>
+		<xacro:UnitreeG1JointState jname="${prefix}hip_yaw_joint"/>
+		<xacro:UnitreeG1JointState jname="${prefix}knee_joint"/>
+		<xacro:UnitreeG1JointState jname="${prefix}ankle_pitch_joint"/>
+		<xacro:UnitreeG1JointState jname="${prefix}ankle_roll_joint"/>
+	</xacro:macro>
+
 	<xacro:macro name="UnitreeG1ArmInterfaces" params="name">
 		<xacro:property name="prefix" value="${name}_"/>
 

@@ -267,10 +267,27 @@ customJointLock
     }
 }
 
+; HOME joint soft-reference: a quadratic penalty pulling the 18 planned joints
+; toward `home_1` (all zeros = arms hanging, waist centred).
+;
+; 【2026-11-19 关闭】
+;   arms_ros2_control 在 2026-11-17 的更新（#132 Add HomeJointReferenceManager,
+;   #142 limit guards）第一次把这条软约束真正接进了 WBC 的求解。此前
+;   `activate true` 只是写在这里、并不生效。
+;
+;   生效后的后果（同一份数据、同一个 80k checkpoint）：
+;     - WBC 在跟踪 EE 目标的同时，持续把 18 个关节往全零位姿拽 →
+;       手臂动作幅度被压缩、出现反复修正（肉眼像"抽搐/重复动作"）
+;     - 与试管架接触时多出一股向体内的力矩 → 接触力尖峰 →
+;       PhysX 把试管弹飞（"碰一下就飞走"）
+;     - 夹爪在 action queue 边界叠加对抗 → 莫名张开、试管掉落
+;
+;   因此暂时关闭，恢复 11-17 之前的求解行为。若将来要用这条约束，
+;   必须先把 home_1 设成"任务起始姿态"而不是全零，并重新评估接触稳定性。
 homeJointReference
 {
-    activate                        true
-    activateDefault                 true
+    activate                        false
+    activateDefault                 false
     mu                              1e-3
     excludeJointIndices
     {
@@ -372,14 +389,23 @@ selfCollision
     mu                              1e-3
     delta                           1e-4
     minimumDistance                 0.01
+    activationDistance              0.03
     collisionObjectPairs
     {
     }
     collisionLinkPairs
     {
-        [0] "torso_link, left_shoulder_yaw_link",
-        [1] "torso_link, left_elbow_link",
-        [2] "torso_link, right_shoulder_yaw_link",
-        [3] "torso_link, right_elbow_link",
+; 【2026-11-19 恢复 main 分支的自碰撞配置】
+;   feature/g1-isaac-control 把这里的碰撞对换成了 shoulder_yaw，并删掉了
+;   activationDistance（缺省 = 5 × minimumDistance = 0.05 m）。后果：
+;     - shoulder_yaw 在正常垂臂姿势下就落在 5cm 激励带内，软约束持续输出
+;       一个把大臂推离躯干的假力（main 的注释称之为 false escape velocity）
+;     - 这个力与 EE 跟踪互相拉扯 → 手臂持续抖动、动作反复
+;     - 碰到试管架时冲击叠加 → PhysX 接触力尖峰 → 试管被弹飞
+;   main 的原始配置只用 elbow + wrist_pitch，并显式把激励带收到 0.03 m。
+        [0] "torso_link, left_elbow_link",
+        [1] "torso_link, right_elbow_link",
+        [2] "torso_link, left_wrist_pitch_link",
+        [3] "torso_link, right_wrist_pitch_link",
     }
 }
