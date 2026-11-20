@@ -389,23 +389,14 @@ selfCollision
     mu                              1e-3
     delta                           1e-4
     minimumDistance                 0.01
-    activationDistance              0.03
     collisionObjectPairs
     {
     }
     collisionLinkPairs
     {
-; 【2026-11-19 恢复 main 分支的自碰撞配置】
-;   feature/g1-isaac-control 把这里的碰撞对换成了 shoulder_yaw，并删掉了
-;   activationDistance（缺省 = 5 × minimumDistance = 0.05 m）。后果：
-;     - shoulder_yaw 在正常垂臂姿势下就落在 5cm 激励带内，软约束持续输出
-;       一个把大臂推离躯干的假力（main 的注释称之为 false escape velocity）
-;     - 这个力与 EE 跟踪互相拉扯 → 手臂持续抖动、动作反复
-;     - 碰到试管架时冲击叠加 → PhysX 接触力尖峰 → 试管被弹飞
-;   main 的原始配置只用 elbow + wrist_pitch，并显式把激励带收到 0.03 m。
-        [0] "torso_link, left_elbow_link",
-        [1] "torso_link, right_elbow_link",
-        [2] "torso_link, left_wrist_pitch_link",
-        [3] "torso_link, right_wrist_pitch_link",
+        [0] "torso_link, left_shoulder_yaw_link",
+        [1] "torso_link, left_elbow_link",
+        [2] "torso_link, right_shoulder_yaw_link",
+        [3] "torso_link, right_elbow_link",
     }
 }
